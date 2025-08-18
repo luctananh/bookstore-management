@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using bookstoree.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<bookstoreeContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("bookstoreeContext") ?? throw new InvalidOperationException("Connection string 'bookstoreeContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
