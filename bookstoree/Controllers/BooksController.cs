@@ -48,7 +48,7 @@ namespace bookstoree.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryId");
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace bookstoree.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryId", book.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
             return View(book);
         }
 
@@ -82,7 +82,7 @@ namespace bookstoree.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryId", book.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
             return View(book);
         }
 
