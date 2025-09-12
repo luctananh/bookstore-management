@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using bookstoree.Data;
 using bookstoree.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace bookstoree.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class OrderDetailsController : Controller
     {
         private readonly bookstoreeContext _context;

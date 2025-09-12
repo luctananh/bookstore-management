@@ -7,16 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using bookstoree.Data;
 using bookstoree.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace bookstoree.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         private readonly bookstoreeContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BooksController(bookstoreeContext context)
+        public BooksController(bookstoreeContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Books
@@ -57,10 +64,26 @@ namespace bookstoree.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl")] Book book)
+        public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Author,Publisher,CategoryId,Price,StockQuantity")] Book book, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "books");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(fileStream);
+                    }
+                    book.ImageUrl = "/images/books/" + uniqueFileName;
+                }
+
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -91,7 +114,7 @@ namespace bookstoree.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl")] Book book, IFormFile? imageFile)
         {
             if (id != book.BookId)
             {
@@ -102,6 +125,27 @@ namespace bookstoree.Controllers
             {
                 try
                 {
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "books");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await imageFile.CopyToAsync(fileStream);
+                        }
+                        book.ImageUrl = "/images/books/" + uniqueFileName;
+                    }
+                    else
+                    {
+                        // If no new image is uploaded, retain the existing ImageUrl
+                        _context.Entry(book).Property(b => b.ImageUrl).IsModified = false;
+                    }
+
                     _context.Update(book);
                     await _context.SaveChangesAsync();
                 }

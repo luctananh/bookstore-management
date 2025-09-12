@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using bookstoree.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace bookstoree.Controllers
 {
@@ -19,6 +20,12 @@ namespace bookstoree.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
         {
             return View();
         }

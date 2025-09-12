@@ -1,0 +1,127 @@
+<div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+            <i class="nav-icon fas fa-user-circle fa-2x text-white"></i>
+        </div>
+        <div class="info">
+            <a href="#" class="d-block">@User.Identity.Name</a>
+        </div>
+    </div>
+
+    <!-- SidebarSearch Form -->
+    <div class="form-inline">
+        <div class="input-group" data-widget="sidebar-search">
+            <input class="form-control form-control-sidebar" type="search" placeholder="Tìm kiếm" aria-label="Search">
+            <div class="input-group-append">
+                <button class="btn btn-sidebar">
+                    <i class="fas fa-search fa-fw"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+            <li class="nav-item">
+                <a href="/Home/Index" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <p>
+                        Bảng điều khiển
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-book"></i>
+                    <p>
+                        Quản lý Sách
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/Books/Index" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Danh sách Sách</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Books/Create" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Thêm Sách</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Categories/Index" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Quản lý Danh mục</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-shopping-cart"></i>
+                    <p>
+                        Quản lý Đơn hàng
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/Orders/Index" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Danh sách Đơn hàng</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/OrderDetails/Index" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Chi tiết Đơn hàng</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="/DiscountCodes/Index" class="nav-link">
+                    <i class="nav-icon fas fa-tags"></i>
+                    <p>
+                        Quản lý Mã giảm giá
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/Users/Index" class="nav-link">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>
+                        Quản lý Người dùng
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/Reports/Index" class="nav-link">
+                    <i class="nav-icon fas fa-chart-line"></i>
+                    <p>
+                        Báo cáo & Thống kê
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <form asp-controller="Users" asp-action="Logout" method="post" id="logoutForm">
+                    <a href="#" class="nav-link" onclick="document.getElementById('logoutForm').submit();">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>
+                            Đăng xuất
+                        </p>
+                    </a>
+                    @Html.AntiForgeryToken()
+                </form>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+</div>

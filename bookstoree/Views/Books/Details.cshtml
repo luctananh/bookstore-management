@@ -1,66 +1,102 @@
-﻿@model bookstoree.Models.Book
+@model bookstoree.Models.Book
 
 @{
     ViewData["Title"] = "Details";
+    Layout = "_Layout";
 }
 
-<h1>Details</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Book Details</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Book Details</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-<div>
-    <h4>Book</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ISBN)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ISBN)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StockQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StockQuantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.CategoryId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.BookId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Book Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl class="row">
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.ISBN)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.ISBN)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.Title)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.Title)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.Author)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.Author)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.Publisher)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.Publisher)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.Price)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.Price)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.StockQuantity)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.StockQuantity)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.Category)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.Category.CategoryName)
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" alt="Book Image" class="img-fluid" style="max-height: 300px;" />
+                                }
+                                else
+                                {
+                                    <p>No Image Available</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Edit" asp-route-id="@Model?.BookId" class="btn btn-info">Edit</a> |
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

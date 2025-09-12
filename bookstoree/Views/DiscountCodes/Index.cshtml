@@ -1,65 +1,81 @@
-﻿@model IEnumerable<bookstoree.Models.DiscountCode>
+@model IEnumerable<bookstoree.Models.DiscountCode>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Mã giảm giá";
+    Layout = "_Layout";
 }
 
-<h1>Index</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lý Mã giảm giá</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Mã giảm giá</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Value)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinimumOrder)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DiscountType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Value)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MinimumOrder)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DiscountCodeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DiscountCodeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DiscountCodeId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Danh sách Mã giảm giá</h3>
+                        <div class="card-tools">
+                            <a asp-action="Create" class="btn btn-primary">Tạo mới</a>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mô tả</th>
+                                    <th>Loại giảm giá</th>
+                                    <th>Giá trị</th>
+                                    <th>Đơn hàng tối thiểu</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.DiscountType)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Value)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.MinimumOrder)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.DiscountCodeId" class="btn btn-sm btn-info">Sửa</a> |
+                                            <a asp-action="Details" asp-route-id="@item.DiscountCodeId" class="btn btn-sm btn-secondary">Chi tiết</a> |
+                                            <a asp-action="Delete" asp-route-id="@item.DiscountCodeId" class="btn btn-sm btn-danger">Xóa</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<!-- /.content -->

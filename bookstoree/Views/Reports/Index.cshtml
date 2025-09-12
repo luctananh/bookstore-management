@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Báo cáo Doanh số";
+    Layout = "_Layout";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Báo cáo Doanh số</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Báo cáo</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Thống kê cơ bản</h3>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-6">Tổng số đơn hàng:</dt>
+                            <dd class="col-sm-6">@ViewData["TotalOrders"]</dd>
+
+                            <dt class="col-sm-6">Tổng doanh thu:</dt>
+                            <dd class="col-sm-6">@ViewData["TotalRevenue"]</dd>
+
+                            <dt class="col-sm-6">Tổng số sách đã bán:</dt>
+                            <dd class="col-sm-6">@ViewData["TotalBooksSold"]</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-info card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Báo cáo chi tiết</h3>
+                    </div>
+                    <div class="card-body">
+                        <p><a asp-action="SalesByCategory" class="btn btn-block btn-outline-info">Xem doanh số theo danh mục</a></p>
+                        <p><a asp-action="TopSellingBooks" class="btn btn-block btn-outline-info">Xem sách bán chạy nhất</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -7,9 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using bookstoree.Data;
 using bookstoree.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace bookstoree.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly bookstoreeContext _context;
@@ -17,6 +22,109 @@ namespace bookstoree.Controllers
         public UsersController(bookstoreeContext context)
         {
             _context = context;
+        }
+
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null || user.PasswordHash != password) // In a real app, hash and verify password
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return View();
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                // AllowRefresh = true,
+                // ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                // IsPersistent = true,
+                // IssuedUtc = DateTimeOffset.UtcNow,
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            return RedirectToAction("Index", "Home"); // Redirect to home or a dashboard
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            return RedirectToAction("Login", "Users");
+        }
+
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber,Role")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check if username or email already exists
+                if (await _context.User.AnyAsync(u => u.UserName == user.UserName || u.Email == user.Email))
+                {
+                    ModelState.AddModelError(string.Empty, "Username or Email already exists.");
+                    return View(user);
+                }
+
+                // Set default role to 'Customer' if not provided or if it's not 'Admin' or 'Staff'
+                if (string.IsNullOrEmpty(user.Role) || (user.Role != "Admin" && user.Role != "Staff"))
+                {
+                    user.Role = "Customer";
+                }
+
+                _context.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Automatically sign in the new user
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Role, user.Role),
+                };
+
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties();
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                return RedirectToAction("Index", "Home");
+            }
+            return View(user);
         }
 
         // GET: Users
