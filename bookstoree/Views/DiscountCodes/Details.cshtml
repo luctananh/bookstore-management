@@ -1,54 +1,88 @@
-﻿@model bookstoree.Models.DiscountCode
+@model bookstoree.Models.DiscountCode
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Discount Code Details";
+    Layout = "_Layout";
 }
 
-<h1>Details</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Discount Code Details</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Discount Code Details</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-<div>
-    <h4>DiscountCode</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DiscountType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DiscountType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MinimumOrder)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MinimumOrder)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.DiscountCodeId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Discount Code Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.DiscountCodeId)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.DiscountCodeId)
+                            </dd>
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.Description)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.Description)
+                            </dd>
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.DiscountType)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.DiscountType)
+                            </dd>
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.Value)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.Value)
+                            </dd>
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.MinimumOrder)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.MinimumOrder)
+                            </dd>
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.StartDate)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.StartDate)
+                            </dd>
+                            <dt class = "col-sm-4">
+                                @Html.DisplayNameFor(model => model.EndDate)
+                            </dt>
+                            <dd class = "col-sm-8">
+                                @Html.DisplayFor(model => model.EndDate)
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Edit" asp-route-id="@Model?.DiscountCodeId" class="btn btn-info">Edit</a> |
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
