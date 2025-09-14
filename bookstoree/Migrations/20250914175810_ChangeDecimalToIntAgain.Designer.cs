@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bookstoree.Data;
 
@@ -11,9 +12,11 @@ using bookstoree.Data;
 namespace bookstoree.Migrations
 {
     [DbContext(typeof(bookstoreeContext))]
-    partial class bookstoreeContextModelSnapshot : ModelSnapshot
+    [Migration("20250914175810_ChangeDecimalToIntAgain")]
+    partial class ChangeDecimalToIntAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,14 +100,14 @@ namespace bookstoree.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MinimumOrder")
-                        .HasColumnType("int");
+                    b.Property<decimal>("MinimumOrder")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("DiscountCodeId");
 

@@ -15,7 +15,7 @@ namespace bookstoree.Models
         [ForeignKey("Discount")]
         public string? DiscountCode { get; set; } // Optional discount code
         [DisplayName("Tổng tiền (VNĐ)")]
-        public decimal TotalAmount { get; set; } // Total amount after applying discounts and taxes
+        public int TotalAmount { get; set; } // Total amount after applying discounts and taxes
         public virtual User? User { get; set; }
         public virtual DiscountCode? Discount { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();

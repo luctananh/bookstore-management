@@ -12,10 +12,10 @@ namespace bookstoree.Models
         
         [DisplayName("Giá trị")]
         // Value of the discount. If DiscountType is "Percent", this is a percentage. If "Fixed", this is a currency amount.
-        public decimal Value { get; set; } 
+        public int Value { get; set; } 
         
         [DisplayName("Đơn hàng tối thiểu (VNĐ)")]
-        public decimal MinimumOrder { get; set; } // Minimum order amount to apply the discount
+        public int MinimumOrder { get; set; } // Minimum order amount to apply the discount
         public DateTime StartDate { get; set; } // Start date of the discount code validity
         public DateTime EndDate { get; set; } // End date of the discount code validity
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

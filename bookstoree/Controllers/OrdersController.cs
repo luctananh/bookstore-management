@@ -279,6 +279,20 @@ namespace bookstoree.Controllers
             }
             // Admin users can edit any order
 
+            // Manually parse TotalAmount
+            if (Request.Form.ContainsKey("TotalAmount"))
+            {
+                var totalAmountString = Request.Form["TotalAmount"];
+                if (int.TryParse(totalAmountString, out int parsedTotalAmount))
+                {
+                    order.TotalAmount = parsedTotalAmount;
+                }
+                else
+                {
+                    ModelState.AddModelError("TotalAmount", "Invalid format for Total Amount.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 try
