@@ -26,7 +26,7 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Discount Code Details</h3>
@@ -46,11 +46,14 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="DiscountType" class="control-label"></label>
-                                <input asp-for="DiscountType" class="form-control" />
+                                <select asp-for="DiscountType" class="form-control">
+                                    <option value="Percent">Percent</option>
+                                    <option value="Fixed">Fixed</option>
+                                </select>
                                 <span asp-validation-for="DiscountType" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Value" class="control-label"></label>
+                                <label asp-for="Value" class="control-label" id="value-label"></label>
                                 <input asp-for="Value" class="form-control" />
                                 <span asp-validation-for="Value" class="text-danger"></span>
                             </div>
@@ -83,4 +86,23 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            function updateValueLabel() {
+                var discountType = $('#DiscountType').val();
+                var valueLabel = $('label[for="Value"]');
+                if (discountType === 'Percent') {
+                    valueLabel.text('Giá trị (%)');
+                } else {
+                    valueLabel.text('Giá trị (VNĐ)');
+                }
+            }
+
+            // Initial call
+            updateValueLabel();
+
+            // Update on change
+            $('#DiscountType').change(updateValueLabel);
+        });
+    </script>
 }

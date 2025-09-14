@@ -54,8 +54,17 @@
                                     <tr>
                                         <td>@Html.DisplayFor(modelItem => item.Description)</td>
                                         <td>@Html.DisplayFor(modelItem => item.DiscountType)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Value)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.MinimumOrder)</td>
+                                        <td>
+                                            @if (item.DiscountType == "Percent")
+                                            {
+                                                @string.Format("{0}%", item.Value)
+                                            }
+                                            else
+                                            {
+                                                @string.Format("{0:N0} VNĐ", item.Value)
+                                            }
+                                        </td>
+                                        <td>@string.Format("{0:N0} VNĐ", item.MinimumOrder)</td>
                                         <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
                                         <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
                                         <td>

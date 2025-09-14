@@ -35,7 +35,7 @@
                             <dd class="col-sm-6">@ViewData["TotalOrders"]</dd>
 
                             <dt class="col-sm-6">Tổng doanh thu:</dt>
-                            <dd class="col-sm-6">@ViewData["TotalRevenue"]</dd>
+                            <dd class="col-sm-6">@string.Format("{0:N0} VNĐ", ViewData["TotalRevenue"])</dd>
 
                             <dt class="col-sm-6">Tổng số sách đã bán:</dt>
                             <dd class="col-sm-6">@ViewData["TotalBooksSold"]</dd>

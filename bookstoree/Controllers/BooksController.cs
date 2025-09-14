@@ -14,7 +14,6 @@ using System.IO;
 
 namespace bookstoree.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         private readonly bookstoreeContext _context;
@@ -27,13 +26,56 @@ namespace bookstoree.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        [AllowAnonymous]
+        public async Task<IActionResult> Index(string searchString, string searchField, int? pageNumber)
         {
-            var bookstoreeContext = _context.Book.Include(b => b.Category);
-            return View(await bookstoreeContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentField"] = searchField;
+
+            var searchFields = new Dictionary<string, string>
+            {
+                { "Title", "Tiêu đề" },
+                { "Author", "Tác giả" },
+                { "ISBN", "ISBN" },
+                { "Price", "Giá" }
+            };
+            ViewData["SearchFields"] = searchFields;
+
+            var booksQuery = _context.Book.Include(b => b.Category).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                switch (searchField)
+                {
+                    case "Title":
+                        booksQuery = booksQuery.Where(b => b.Title.Contains(searchString));
+                        break;
+                    case "Author":
+                        booksQuery = booksQuery.Where(b => b.Author.Contains(searchString));
+                        break;
+                    case "ISBN":
+                        booksQuery = booksQuery.Where(b => b.ISBN.Contains(searchString));
+                        break;
+                    case "Price":
+                        booksQuery = booksQuery.Where(b => b.Price.ToString().Contains(searchString));
+                        break;
+                    default: // "All" or empty
+                        booksQuery = booksQuery.Where(b =>
+                            b.Title.Contains(searchString) ||
+                            b.Author.Contains(searchString) ||
+                            b.ISBN.Contains(searchString) ||
+                            b.Price.ToString().Contains(searchString));
+                        break;
+                }
+            }
+
+            int pageSize = 10;
+            var paginatedBooks = await PaginatedList<Book>.CreateAsync(booksQuery.AsNoTracking(), pageNumber ?? 1, pageSize);
+            return View(paginatedBooks);
         }
 
         // GET: Books/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,6 +95,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: Books/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
@@ -64,7 +107,8 @@ namespace bookstoree.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Author,Publisher,CategoryId,Price,StockQuantity")] Book book, IFormFile imageFile)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -93,6 +137,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -114,7 +159,8 @@ namespace bookstoree.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl")] Book book, IFormFile? imageFile)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile imageFile)
         {
             if (id != book.BookId)
             {
@@ -167,6 +213,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -187,6 +234,7 @@ namespace bookstoree.Controllers
 
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

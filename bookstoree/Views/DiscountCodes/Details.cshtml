@@ -26,7 +26,7 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Discount Code Information</h3>
@@ -55,13 +55,20 @@
                                 @Html.DisplayNameFor(model => model.Value)
                             </dt>
                             <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Value)
+                                @if (Model.DiscountType == "Percent")
+                                {
+                                    @string.Format("{0}%", Model.Value)
+                                }
+                                else
+                                {
+                                    @string.Format("{0:N0} VNĐ", Model.Value)
+                                }
                             </dd>
                             <dt class = "col-sm-4">
                                 @Html.DisplayNameFor(model => model.MinimumOrder)
                             </dt>
                             <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.MinimumOrder)
+                                @string.Format("{0:N0} VNĐ", Model.MinimumOrder)
                             </dd>
                             <dt class = "col-sm-4">
                                 @Html.DisplayNameFor(model => model.StartDate)

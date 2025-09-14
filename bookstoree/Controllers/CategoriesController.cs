@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace bookstoree.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly bookstoreeContext _context;
@@ -22,12 +21,39 @@ namespace bookstoree.Controllers
         }
 
         // GET: Categories
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> Index(string searchString, string searchField)
         {
-            return View(await _context.Category.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentField"] = searchField;
+
+            var searchFields = new Dictionary<string, string>
+            {
+                { "CategoryName", "Tên danh mục" }
+            };
+            ViewData["SearchFields"] = searchFields;
+
+            var categories = from c in _context.Category
+                           select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                switch (searchField)
+                {
+                    case "CategoryName":
+                        categories = categories.Where(s => s.CategoryName.Contains(searchString));
+                        break;
+                    default:
+                        categories = categories.Where(s => s.CategoryName.Contains(searchString));
+                        break;
+                }
+            }
+
+            return View(await categories.AsNoTracking().ToListAsync());
         }
 
         // GET: Categories/Details/5
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +72,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: Categories/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +82,7 @@ namespace bookstoree.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,CategoryName")] Category category)
         {
@@ -68,6 +96,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,6 +116,7 @@ namespace bookstoree.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName")] Category category)
         {
@@ -119,6 +149,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,6 +169,7 @@ namespace bookstoree.Controllers
 
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

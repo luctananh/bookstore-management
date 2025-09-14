@@ -1,13 +1,5 @@
 <div class="sidebar">
-    <!-- Sidebar user panel (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-            <i class="nav-icon fas fa-user-circle fa-2x text-white"></i>
-        </div>
-        <div class="info">
-            <a href="#" class="d-block">@User.Identity.Name</a>
-        </div>
-    </div>
+
 
     <!-- SidebarSearch Form -->
     <div class="form-inline">
@@ -47,12 +39,6 @@
                         <a href="/Books/Index" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Danh sách Sách</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/Books/Create" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Thêm Sách</p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -110,17 +96,7 @@
                     </p>
                 </a>
             </li>
-            <li class="nav-item">
-                <form asp-controller="Users" asp-action="Logout" method="post" id="logoutForm">
-                    <a href="#" class="nav-link" onclick="document.getElementById('logoutForm').submit();">
-                        <i class="nav-icon fas fa-sign-out-alt"></i>
-                        <p>
-                            Đăng xuất
-                        </p>
-                    </a>
-                    @Html.AntiForgeryToken()
-                </form>
-            </li>
+
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

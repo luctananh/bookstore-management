@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bookstoree.Data;
 
@@ -11,9 +12,11 @@ using bookstoree.Data;
 namespace bookstoree.Migrations
 {
     [DbContext(typeof(bookstoreeContext))]
-    partial class bookstoreeContextModelSnapshot : ModelSnapshot
+    [Migration("20250913061320_AddDescriptionAndDateAddedToBook")]
+    partial class AddDescriptionAndDateAddedToBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

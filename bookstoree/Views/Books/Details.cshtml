@@ -33,7 +33,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <dl class="row">
                                     <dt class = "col-sm-4">
                                         @Html.DisplayNameFor(model => model.ISBN)
@@ -63,7 +63,7 @@
                                         @Html.DisplayNameFor(model => model.Price)
                                     </dt>
                                     <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.Price)
+                                        @string.Format("{0:N0} VNĐ", Model.Price)
                                     </dd>
                                     <dt class = "col-sm-4">
                                         @Html.DisplayNameFor(model => model.StockQuantity)
@@ -77,9 +77,21 @@
                                     <dd class = "col-sm-8">
                                         @Html.DisplayFor(model => model.Category.CategoryName)
                                     </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.Description)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.Description)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayNameFor(model => model.DateAdded)
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Html.DisplayFor(model => model.DateAdded)
+                                    </dd>
                                 </dl>
                             </div>
-                            <div class="col-md-6 text-center">
+                            <div class="col-md-4 text-center">
                                 @if (!string.IsNullOrEmpty(Model.ImageUrl))
                                 {
                                     <img src="@Model.ImageUrl" alt="Book Image" class="img-fluid" style="max-height: 300px;" />
@@ -93,7 +105,7 @@
                     </div>
                     <div class="card-footer">
                         <a asp-action="Edit" asp-route-id="@Model?.BookId" class="btn btn-info">Edit</a> |
-                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        <button type="button" onclick="history.back()" class="btn btn-secondary">Back</button>
                     </div>
                 </div>
             </div>

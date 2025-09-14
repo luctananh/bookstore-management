@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace bookstoree.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class DiscountCodesController : Controller
     {
         private readonly bookstoreeContext _context;
@@ -22,12 +21,44 @@ namespace bookstoree.Controllers
         }
 
         // GET: DiscountCodes
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> Index(string searchString, string searchField)
         {
-            return View(await _context.DiscountCode.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentField"] = searchField;
+
+            var searchFields = new Dictionary<string, string>
+            {
+                { "DiscountCodeId", "Mã giảm giá" },
+                { "Description", "Mô tả" }
+            };
+            ViewData["SearchFields"] = searchFields;
+
+            var discountCodes = from d in _context.DiscountCode
+                                select d;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                switch (searchField)
+                {
+                    case "DiscountCodeId":
+                        discountCodes = discountCodes.Where(s => s.DiscountCodeId.Contains(searchString));
+                        break;
+                    case "Description":
+                        discountCodes = discountCodes.Where(s => s.Description.Contains(searchString));
+                        break;
+                    default:
+                        discountCodes = discountCodes.Where(s => s.DiscountCodeId.Contains(searchString)
+                                                               || s.Description.Contains(searchString));
+                        break;
+                }
+            }
+
+            return View(await discountCodes.AsNoTracking().ToListAsync());
         }
 
         // GET: DiscountCodes/Details/5
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -46,6 +77,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: DiscountCodes/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +87,7 @@ namespace bookstoree.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscountCodeId,Description,DiscountType,Value,MinimumOrder,StartDate,EndDate")] DiscountCode discountCode)
         {
@@ -68,6 +101,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: DiscountCodes/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -87,6 +121,7 @@ namespace bookstoree.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("DiscountCodeId,Description,DiscountType,Value,MinimumOrder,StartDate,EndDate")] DiscountCode discountCode)
         {
@@ -119,6 +154,7 @@ namespace bookstoree.Controllers
         }
 
         // GET: DiscountCodes/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -138,6 +174,7 @@ namespace bookstoree.Controllers
 
         // POST: DiscountCodes/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {

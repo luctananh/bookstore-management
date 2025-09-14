@@ -1,0 +1,24 @@
+@model bookstoree.Models.ViewModels.OrderDetailViewModel
+@{
+    var index = ViewData["index"];
+}
+
+<div class="form-row order-detail-item mb-2">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label asp-for="BookId" class="control-label">Book</label>
+            <select asp-for="BookId" class="form-control" asp-items="ViewBag.Books" name="OrderDetails[@index].BookId"></select>
+            <span asp-validation-for="BookId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="Quantity" class="control-label">Quantity</label>
+            <input asp-for="Quantity" class="form-control" type="number" min="1" value="1" name="OrderDetails[@index].Quantity" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="button" class="btn btn-danger remove-order-item">Remove</button>
+    </div>
+</div>

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 
 namespace bookstoree.Models
 {
@@ -13,6 +14,7 @@ namespace bookstoree.Models
         public string? PaymentMethod { get; set; } // e.g., Credit Card, PayPal, etc.
         [ForeignKey("Discount")]
         public string? DiscountCode { get; set; } // Optional discount code
+        [DisplayName("Tổng tiền (VNĐ)")]
         public decimal TotalAmount { get; set; } // Total amount after applying discounts and taxes
         public virtual User? User { get; set; }
         public virtual DiscountCode? Discount { get; set; }

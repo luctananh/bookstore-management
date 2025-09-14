@@ -34,7 +34,7 @@
                     <form asp-action="Edit" enctype="multipart/form-data">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-8">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <input type="hidden" asp-for="BookId" />
                                     <input type="hidden" asp-for="ImageUrl" /> @* Keep existing ImageUrl if no new file is uploaded *@
@@ -73,8 +73,18 @@
                                         <input asp-for="StockQuantity" class="form-control" />
                                         <span asp-validation-for="StockQuantity" class="text-danger"></span>
                                     </div>
+                                    <div class="form-group">
+                                        <label asp-for="Description" class="control-label"></label>
+                                        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="DateAdded" class="control-label"></label>
+                                        <input asp-for="DateAdded" class="form-control" type="date" />
+                                        <span asp-validation-for="DateAdded" class="text-danger"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="imageFile" class="control-label">Image Upload</label>
                                         <input type="file" name="imageFile" id="imageFile" class="form-control" onchange="previewImage(event)" />
@@ -92,7 +102,7 @@
                         </div>
                         <div class="card-footer">
                             <input type="submit" value="Save" class="btn btn-primary" />
-                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <button type="button" onclick="history.back()" class="btn btn-secondary">Back</button>
                         </div>
                     </form>
                 </div>
