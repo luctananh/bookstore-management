@@ -47,7 +47,7 @@
                             <div class="form-group">
                                 <label asp-for="Status" class="control-label"></label>
                                 <select asp-for="Status" class="form-control">
-                                    <option value="Tại cửa hàng">Tại cửa hàng</option>
+                                    <option value="Tại cửa hàng">Thanh toán tại cửa hàng</option>
                                     <option value="Giao hàng">Giao hàng</option>
                                 </select>
                                 <span asp-validation-for="Status" class="text-danger"></span>
@@ -57,7 +57,7 @@
                                 <select asp-for="PaymentMethod" class="form-control">
                                     <option value="Chuyển khoản">Chuyển khoản</option>
                                     <option value="Tiền mặt">Tiền mặt</option>
-                                    <option value="Giao hàng">Giao hàng</option>
+                                    <option value="Giao hàng">Ship code</option>
                                 </select>
                                 <span asp-validation-for="PaymentMethod" class="text-danger"></span>
                             </div>
