@@ -60,12 +60,10 @@
                                         <td>
                                             @if (item.OrderDetails != null && item.OrderDetails.Any())
                                             {
-                                                <ul>
-                                                    @foreach (var detail in item.OrderDetails)
-                                                    {
-                                                        <li>@detail.Book.Title</li>
-                                                    }
-                                                </ul>
+                                                @foreach (var detail in item.OrderDetails)
+                                                {
+                                                    @detail.Book.Title <br/>
+                                                }
                                             }
                                             else
                                             {
@@ -75,12 +73,10 @@
                                         <td>
                                             @if (item.OrderDetails != null && item.OrderDetails.Any())
                                             {
-                                                <ul>
-                                                    @foreach (var detail in item.OrderDetails)
-                                                    {
-                                                        <li>@detail.Quantity</li>
-                                                    }
-                                                </ul>
+                                                @foreach (var detail in item.OrderDetails)
+                                                {
+                                                    @detail.Quantity <br/>
+                                                }
                                             }
                                             else
                                             {
