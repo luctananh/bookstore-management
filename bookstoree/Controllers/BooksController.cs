@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Diagnostics;
 
 namespace bookstoree.Controllers
 {
@@ -160,7 +161,7 @@ namespace bookstoree.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile? imageFile)
         {
             if (id != book.BookId)
             {
@@ -171,6 +172,23 @@ namespace bookstoree.Controllers
             {
                 try
                 {
+                    var bookToUpdate = await _context.Book.AsNoTracking().FirstOrDefaultAsync(b => b.BookId == id);
+                    if (bookToUpdate == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update properties from the form, excluding ImageUrl for now
+                    bookToUpdate.ISBN = book.ISBN;
+                    bookToUpdate.Title = book.Title;
+                    bookToUpdate.Description = book.Description;
+                    bookToUpdate.Author = book.Author;
+                    bookToUpdate.Publisher = book.Publisher;
+                    bookToUpdate.CategoryId = book.CategoryId;
+                    bookToUpdate.Price = book.Price;
+                    bookToUpdate.StockQuantity = book.StockQuantity;
+                    bookToUpdate.DateAdded = book.DateAdded; // Assuming DateAdded can be updated from form
+
                     if (imageFile != null && imageFile.Length > 0)
                     {
                         var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "books");
@@ -184,15 +202,15 @@ namespace bookstoree.Controllers
                         {
                             await imageFile.CopyToAsync(fileStream);
                         }
-                        book.ImageUrl = "/images/books/" + uniqueFileName;
+                        bookToUpdate.ImageUrl = "/images/books/" + uniqueFileName;
                     }
                     else
                     {
-                        // If no new image is uploaded, retain the existing ImageUrl
-                        _context.Entry(book).Property(b => b.ImageUrl).IsModified = false;
+                        // Retain the existing ImageUrl from the database
+                        bookToUpdate.ImageUrl = bookToUpdate.ImageUrl; 
                     }
 
-                    _context.Update(book);
+                    _context.Update(bookToUpdate); // Now update the tracked entity
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -207,6 +225,18 @@ namespace bookstoree.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
+            }
+            else // Add this else block
+            {
+                Debug.WriteLine("--- ModelState is INVALID in BooksController Edit POST ---");
+                foreach (var modelStateEntry in ModelState.Values)
+                {
+                    foreach (var error in modelStateEntry.Errors)
+                    {
+                        Debug.WriteLine($"ModelState Error: {error.ErrorMessage}");
+                    }
+                }
+                Debug.WriteLine("-------------------------------------------------------");
             }
             ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryId", book.CategoryId);
             return View(book);
