@@ -39,7 +39,10 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>Mã đơn hàng</th>
                                     <th>Ngày đặt hàng</th>
+                                    <th>Tên sách</th>
+                                    <th>Số lượng</th>
                                     <th>Trạng thái</th>
                                     <th>Phương thức thanh toán</th>
                                     <th>Tổng tiền</th>
@@ -52,7 +55,38 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.OrderId)</td>
                                         <td>@Html.DisplayFor(modelItem => item.OrderDate)</td>
+                                        <td>
+                                            @if (item.OrderDetails != null && item.OrderDetails.Any())
+                                            {
+                                                <ul>
+                                                    @foreach (var detail in item.OrderDetails)
+                                                    {
+                                                        <li>@detail.Book.Title</li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <span>N/A</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.OrderDetails != null && item.OrderDetails.Any())
+                                            {
+                                                <ul>
+                                                    @foreach (var detail in item.OrderDetails)
+                                                    {
+                                                        <li>@detail.Quantity</li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <span>N/A</span>
+                                            }
+                                        </td>
                                         <td>@Html.DisplayFor(modelItem => item.Status)</td>
                                         <td>@Html.DisplayFor(modelItem => item.PaymentMethod)</td>
                                         <td>@string.Format("{0:N0} VNĐ", item.TotalAmount)</td>

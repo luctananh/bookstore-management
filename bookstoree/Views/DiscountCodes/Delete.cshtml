@@ -27,13 +27,20 @@
             @Html.DisplayNameFor(model => model.Value)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value)
+            @if (Model.DiscountType == "Percent")
+            {
+                @string.Format("{0}%", Model.Value)
+            }
+            else
+            {
+                @string.Format("{0:N0} VNĐ", Model.Value)
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.MinimumOrder)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MinimumOrder)
+            @string.Format("{0:N0} VNĐ", Model.MinimumOrder)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)

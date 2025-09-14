@@ -65,5 +65,21 @@ namespace bookstoree.Controllers
 
             return View(topSellingBooks);
         }
+
+        public async Task<IActionResult> SalesByUser()
+        {
+            var salesByUser = await _context.Order
+                .Include(o => o.User)
+                .GroupBy(o => o.User.FullName)
+                .Select(g => new
+                {
+                    UserName = g.Key,
+                    TotalSales = g.Sum(o => o.TotalAmount)
+                })
+                .OrderByDescending(x => x.TotalSales)
+                .ToListAsync();
+
+            return View(salesByUser);
+        }
     }
 }

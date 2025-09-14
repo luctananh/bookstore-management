@@ -33,7 +33,7 @@
             @Html.DisplayNameFor(model => model.TotalAmount)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TotalAmount)
+            @string.Format("{0:N0} VNĐ", Model.TotalAmount)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
@@ -48,6 +48,33 @@
             @Html.DisplayFor(model => model.Discount.DiscountCodeId)
         </dd>
     </dl>
+
+    <hr />
+    <h4>Order Items</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.OrderDetails != null)
+            {
+                @foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@item.Book.Title</td>
+                        <td>@item.Quantity</td>
+                        <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td>
+                        <td>@string.Format("{0:N0} VNĐ", item.Quantity * item.UnitPrice)</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="OrderId" />

@@ -37,7 +37,9 @@ namespace bookstoree.Controllers
             };
             ViewData["SearchFields"] = searchFields;
 
-            IQueryable<Order> orders = _context.Order.Include(o => o.Discount).Include(o => o.User);
+            IQueryable<Order> orders = _context.Order.Include(o => o.Discount).Include(o => o.User)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Book);
 
             if (User.IsInRole("Staff"))
             {
@@ -88,6 +90,8 @@ namespace bookstoree.Controllers
             var order = await _context.Order
                 .Include(o => o.Discount)
                 .Include(o => o.User)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Book)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {
@@ -204,7 +208,10 @@ namespace bookstoree.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Order.FindAsync(id);
+            var order = await _context.Order
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Book)
+                .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {
                 return NotFound();
@@ -219,10 +226,23 @@ namespace bookstoree.Controllers
                     return RedirectToAction("AccessDenied", "Home");
                 }
             }
-            // Admin users can edit any order
-
             ViewData["DiscountCode"] = new SelectList(_context.DiscountCode, "DiscountCodeId", "DiscountCodeId", order.DiscountCode);
             ViewData["UserId"] = new SelectList(_context.User, "UserId", "UserId", order.UserId);
+
+            var books = _context.Book.Select(b => new { b.BookId, b.Title, b.Price }).ToList();
+            ViewData["BookListForJs"] = books;
+            ViewData["Books"] = new SelectList(books, "BookId", "Title"); // Thêm dòng này để hiển thị sách trong dropdown
+
+            var existingOrderDetailsForJson = order.OrderDetails.Select(od => new
+            {
+                od.OrderDetailId,
+                od.BookId,
+                od.Quantity,
+                od.UnitPrice,
+                Book = new { od.Book.Title } // Select only the title from Book
+            }).ToList();
+            ViewData["ExistingOrderDetailsJson"] = System.Text.Json.JsonSerializer.Serialize(existingOrderDetailsForJson);
+
             return View(order);
         }
 
@@ -296,6 +316,8 @@ namespace bookstoree.Controllers
             var order = await _context.Order
                 .Include(o => o.Discount)
                 .Include(o => o.User)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Book)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {

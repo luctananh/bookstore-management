@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using bookstoree.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims; // Added for ClaimTypes
+using System.Text.Json.Serialization; // Added for ReferenceHandler.Preserve
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<bookstoreeContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("bookstoreeContext") ?? throw new InvalidOperationException("Connection string 'bookstoreeContext' not found.")));
@@ -24,7 +25,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
 
 var app = builder.Build();
 
