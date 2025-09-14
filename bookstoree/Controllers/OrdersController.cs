@@ -113,8 +113,18 @@ namespace bookstoree.Controllers
         public IActionResult Create()
         {
             var viewModel = new OrderCreateViewModel();
-            ViewData["DiscountCode"] = new SelectList(_context.DiscountCode, "DiscountCodeId", "DiscountCodeId");
-            ViewData["Books"] = new SelectList(_context.Book, "BookId", "Title"); // For selecting books in order details
+            var discounts = _context.DiscountCode.ToList();
+            var discountList = discounts.Select(d => new { d.DiscountCodeId, d.Description }).ToList();
+            discountList.Insert(0, new { DiscountCodeId = "", Description = "None" });
+            ViewData["DiscountCode"] = new SelectList(discountList, "DiscountCodeId", "Description");
+
+            ViewData["DiscountDetails"] = System.Text.Json.JsonSerializer.Serialize(
+                discounts.ToDictionary(d => d.DiscountCodeId, d => new { d.DiscountType, d.Value, d.MinimumOrder }));
+
+            var books = _context.Book.Select(b => new { b.BookId, b.Title, b.Price }).ToList();
+            ViewData["BookListForJs"] = books;
+            ViewData["Books"] = new SelectList(books, "BookId", "Title");
+            ViewData["BookPrices"] = System.Text.Json.JsonSerializer.Serialize(books.ToDictionary(b => b.BookId, b => b.Price));
 
             // UserId will be set automatically in POST action to the logged-in user's ID
             // No need to select it in the view

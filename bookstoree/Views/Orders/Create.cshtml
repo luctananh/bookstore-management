@@ -56,7 +56,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="Order.TotalAmount" class="control-label"></label>
-                                <input asp-for="Order.TotalAmount" class="form-control" />
+                                <input asp-for="Order.TotalAmount" class="form-control" readonly />
                                 <span asp-validation-for="Order.TotalAmount" class="text-danger"></span>
                             </div>
 
@@ -85,17 +85,49 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        var bookPrices = @Html.Raw(ViewData["BookPrices"]);
+        var discountDetails = @Html.Raw(ViewData["DiscountDetails"]);
+        var booksData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewData["BookListForJs"]));
+
+        function calculateTotal() {
+            var subtotal = 0;
+            $('.order-detail-item').each(function () {
+                var bookId = $(this).find('select[name$="BookId"]').val();
+                var quantity = $(this).find('input[name$="Quantity"]').val();
+                if (bookId && quantity) {
+                    subtotal += bookPrices[bookId] * quantity;
+                }
+            });
+
+            var discountCode = $('#Order_DiscountCode').val();
+            var total = subtotal;
+            if (discountCode && discountDetails[discountCode]) {
+                var discount = discountDetails[discountCode];
+                if (subtotal >= discount.MinimumOrder) {
+                    if (discount.DiscountType === 'Percent') {
+                        total = subtotal * (1 - discount.Value / 100);
+                    } else { // Fixed
+                        total = subtotal - discount.Value;
+                    }
+                }
+            }
+
+            $('#Order_TotalAmount').val(total < 0 ? 0 : total);
+        }
+
         var orderDetailIndex = @Model.OrderDetails.Count; // Start index for new items
 
         $('#addOrderItem').click(function () {
+            var options = '';
+            for (var i = 0; i < booksData.length; i++) {
+                options += '<option value="' + booksData[i].BookId + '">' + booksData[i].Title + '</option>';
+            }
+
             var newRow = '<div class="form-row order-detail-item mb-2">' +
                             '<div class="col-md-6">' +
                                 '<div class="form-group">' +
                                     '<label for="OrderDetails_' + orderDetailIndex + '__BookId" class="control-label">Book</label>' +
-                                    '<select id="OrderDetails_' + orderDetailIndex + '__BookId" class="form-control" name="OrderDetails[' + orderDetailIndex + '].BookId">' +
-                                        '@(Html.Raw(Json.Serialize(ViewBag.Books)))'.replace(/&quot;/g, '"') // Deserialize and re-serialize to handle quotes
-                                        .replace(/"Value":"(.*?)","Text":"(.*?)"/g, '<option value="$1">$2</option>') // Convert to options
-                                    + '</select>' +
+                                    '<select id="OrderDetails_' + orderDetailIndex + '__BookId" class="form-control" name="OrderDetails[' + orderDetailIndex + '].BookId">' + options + '</select>' +
                                     '<span data-valmsg-for="OrderDetails[' + orderDetailIndex + '].BookId" class="text-danger"></span>' +
                                 '</div>' +
                             '</div>' +
@@ -112,10 +144,18 @@
                         '</div>';
             $('#orderDetailsContainer').append(newRow);
             orderDetailIndex++;
+            calculateTotal();
         });
 
         $(document).on('click', '.remove-order-item', function () {
             $(this).closest('.order-detail-item').remove();
+            calculateTotal();
         });
+
+        $(document).on('change', '.order-detail-item select, .order-detail-item input, #Order_DiscountCode', function () {
+            calculateTotal();
+        });
+
+        calculateTotal();
     </script>
 }
