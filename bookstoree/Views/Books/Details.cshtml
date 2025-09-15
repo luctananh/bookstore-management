@@ -73,7 +73,7 @@
                                         @Html.DisplayName("Category")
                                     </dt>
                                     <dd class="col-sm-8">
-                                        @Model.Category.CategoryName
+                                        @(Model.Category != null ? Model.Category.CategoryName : "N/A")
                                     </dd>
                                     <dt class="col-sm-4">
                                         @Html.DisplayName("Description")

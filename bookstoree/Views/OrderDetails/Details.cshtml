@@ -30,32 +30,46 @@
                         <h3 class="card-title">Thông tin chi tiết đơn hàng</h3>
                     </div>
                     <div class="card-body">
-                        <dl class = "row">
-                            <dt class = "col-sm-4">
-                                @Html.DisplayName("Quantity")
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Model.Quantity
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayName("UnitPrice")
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @string.Format("{0:N0} VNĐ", Model.UnitPrice)
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayName("Order")
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Model.Order.OrderDate - @Model.Order.User.UserName
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayName("Book")
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Model.Book.Title
-                            </dd>
-                        </dl>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <dl class = "row">
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayName("Quantity")
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @Model.Quantity
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayName("UnitPrice")
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @string.Format("{0:N0} VNĐ", Model.UnitPrice)
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayName("Order")
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @(Model.Order != null ? $"{Model.Order.OrderDate} - {Model.Order.User?.UserName}" : "N/A")
+                                    </dd>
+                                    <dt class = "col-sm-4">
+                                        @Html.DisplayName("Book")
+                                    </dt>
+                                    <dd class = "col-sm-8">
+                                        @(Model.Book != null ? Model.Book.Title : "N/A")
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                @if (Model.Book != null && !string.IsNullOrEmpty(Model.Book.ImageUrl))
+                                {
+                                    <img src="@Model.Book.ImageUrl" alt="Book Image" class="img-fluid" style="max-height: 200px;" />
+                                }
+                                else
+                                {
+                                    <p>Không có hình ảnh sách</p>
+                                }
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer">
                         @* <a asp-action="Edit" asp-route-id="@Model?.OrderDetailId" class="btn btn-info">Edit</a> | *@
