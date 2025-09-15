@@ -39,15 +39,16 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>Danh mục</th>
                                     <th>Mã ISBN</th>
                                     <th>Tiêu đề</th>
+                                    <th>Mô tả</th>
                                     <th>Tác giả</th>
                                     <th>Nhà xuất bản</th>
                                     <th>Giá</th>
-                                    <th>Số lượng tồn kho</th>
-                                    <th>Ảnh bìa</th>
-                                    <th>Danh mục</th>
-                                    <th>Mô tả</th>
+                                    <th>Số lượng trong kho</th>
+                                    <th>Ảnh bìa</th>                                  
+                                    
                                     <th>Ngày thêm</th>
                                     <th>Thao tác</th>
                                 </tr>
@@ -56,6 +57,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
                                         <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
                                         <td>
                                             @{
@@ -67,17 +69,6 @@
                                             }
                                             @title
                                         </td>
-                                        <td>@Html.DisplayFor(modelItem => item.Author)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
-                                        <td>@string.Format("{0:N0} VNĐ", item.Price)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.StockQuantity)</td>
-                                        <td>
-                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                            {
-                                                <img src="@item.ImageUrl" alt="Book Image" style="max-width: 50px;" />
-                                            }
-                                        </td>
-                                        <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
                                         <td>
                                             @{
                                                 var description = item.Description;
@@ -88,6 +79,18 @@
                                             }
                                             @description
                                         </td>
+                                        <td>@Html.DisplayFor(modelItem => item.Author)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
+                                        <td>@string.Format("{0:N0} VNĐ", item.Price)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.StockQuantity)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="@item.ImageUrl" alt="Book Image" style="max-width: 50px;" />
+                                            }
+                                        </td>
+                                        
+
                                         <td>@Html.DisplayFor(modelItem => item.DateAdded)</td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.BookId" class="btn btn-sm btn-info">Sửa</a> |
