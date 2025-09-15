@@ -68,11 +68,11 @@
                             </div>
 
                             <hr />
-                            <h4>Order Items</h4>
+                            <!-- <h4>Order Items</h4> -->
                             <div id="orderDetailsContainer">
                                 @* Initial OrderDetail item will be rendered here *@
                             </div>
-                            <button type="button" id="addOrderItem" class="btn btn-success">Add Item</button>
+                            <button type="button" id="addOrderItem" class="btn btn-success">Thêm sách</button>
                         </div>
                         <div class="card-footer">
                             <input type="submit" value="Tạo mới" class="btn btn-primary" />
@@ -135,20 +135,20 @@
                 var newRow = '<div class="form-row order-detail-item mb-2">' +
                                 '<div class="col-md-6">' +
                                     '<div class="form-group">' +
-                                        '<label for="OrderDetails_' + orderDetailIndex + '__BookId" class="control-label">Book</label>' +
+                                        '<label for="OrderDetails_' + orderDetailIndex + '__BookId" class="control-label">Tên sách</label>' +
                                         '<select id="OrderDetails_' + orderDetailIndex + '__BookId" class="form-control select2bs4" name="OrderDetails[' + orderDetailIndex + '].BookId">' + options + '</select>' +
                                         '<span data-valmsg-for="OrderDetails[' + orderDetailIndex + '].BookId" class="text-danger"></span>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div class="col-md-4">' +
                                     '<div class="form-group">' +
-                                        '<label for="OrderDetails_' + orderDetailIndex + '__Quantity" class="control-label">Quantity</label>' +
+                                        '<label for="OrderDetails_' + orderDetailIndex + '__Quantity" class="control-label">Số lượng</label>' +
                                         '<input id="OrderDetails_' + orderDetailIndex + '__Quantity" class="form-control" type="number" min="1" value="1" name="OrderDetails[' + orderDetailIndex + '].Quantity" />' +
                                         '<span data-valmsg-for="OrderDetails[' + orderDetailIndex + '].Quantity" class="text-danger"></span>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div class="col-md-2 d-flex align-items-end">' +
-                                    '<button type="button" class="btn btn-danger remove-order-item">Remove</button>' +
+                                    '<button type="button" class="btn btn-danger remove-order-item">Xóa</button>' +
                                 '</div>' +
                             '</div>';
                 $('#orderDetailsContainer').append(newRow);

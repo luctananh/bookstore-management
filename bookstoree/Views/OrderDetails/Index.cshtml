@@ -30,9 +30,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Danh sách Chi tiết Đơn hàng</h3>
-                        <div class="card-tools">
+                        @* <div class="card-tools">
                             <a asp-action="Create" class="btn btn-primary">Tạo mới</a>
-                        </div>
+                        </div> *@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -58,7 +58,7 @@
                                         @* <td>@Html.DisplayFor(modelItem => item.Order.OrderId)</td> *@
                                         <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
                                         <td>
-                                            <a asp-action="Edit" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-info">Sửa</a> |
+                                            @* <a asp-action="Edit" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-info">Sửa</a> | *@
                                             <a asp-action="Details" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-secondary">Chi tiết</a> |
                                             <a asp-action="Delete" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-danger">Xóa</a>
                                         </td>

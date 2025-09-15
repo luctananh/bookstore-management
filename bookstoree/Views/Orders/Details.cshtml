@@ -76,17 +76,16 @@
                         </dl>
                     </div>
                     <hr />
-                    <div class="card-header">
+                    @* <div class="card-header">
                         <h3 class="card-title">Order Items</h3>
-                    </div>
+                    </div> *@
                     <div class="card-body">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Book Title</th>
-                                    <th>Quantity</th>
-                                    <th>Unit Price</th>
-                                    <th>Total</th>
+                                    <th>Tên sách</th>
+                                    <th>Số lượng</th>
+                                    <th>Tổng tiền</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -97,7 +96,7 @@
                                         <tr>
                                             <td>@item.Book.Title</td>
                                             <td>@item.Quantity</td>
-                                            <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td>
+                                            @* <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td> *@
                                             <td>@string.Format("{0:N0} VNĐ", item.Quantity * item.UnitPrice)</td>
                                         </tr>
                                     }

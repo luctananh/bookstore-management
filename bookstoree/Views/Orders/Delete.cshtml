@@ -50,14 +50,13 @@
     </dl>
 
     <hr />
-    <h4>Order Items</h4>
+    <!-- <h4>Order Items</h4> -->
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Book Title</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Total</th>
+                <th>Tên sách</th>
+                <th>Số lượng</th>
+                <th>Tổng tiền</th>
             </tr>
         </thead>
         <tbody>
@@ -68,7 +67,7 @@
                     <tr>
                         <td>@item.Book.Title</td>
                         <td>@item.Quantity</td>
-                        <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td>
+                        @* <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td> *@
                         <td>@string.Format("{0:N0} VNĐ", item.Quantity * item.UnitPrice)</td>
                     </tr>
                 }
