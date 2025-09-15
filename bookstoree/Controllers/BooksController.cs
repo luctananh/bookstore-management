@@ -15,6 +15,7 @@ using System.Diagnostics;
 
 namespace bookstoree.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private readonly bookstoreeContext _context;
@@ -27,7 +28,6 @@ namespace bookstoree.Controllers
         }
 
         // GET: Books
-        [AllowAnonymous]
         public async Task<IActionResult> Index(string searchString, string searchField, int? pageNumber)
         {
             ViewData["CurrentFilter"] = searchString;
@@ -76,7 +76,6 @@ namespace bookstoree.Controllers
         }
 
         // GET: Books/Details/5
-        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
