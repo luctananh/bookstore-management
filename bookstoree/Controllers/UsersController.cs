@@ -105,6 +105,7 @@ namespace bookstoree.Controllers
 
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đăng ký tài khoản thành công!";
 
                 // Automatically sign in the new user
                 var claims = new List<Claim>
@@ -164,6 +165,7 @@ namespace bookstoree.Controllers
 
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Người dùng đã được tạo thành công!";
                 return RedirectToAction(nameof(Index)); // Redirect to user list after creation
             }
             ViewBag.Roles = new List<string> { "Admin", "Staff", "Customer" };
@@ -334,6 +336,7 @@ namespace bookstoree.Controllers
                 {
                     _context.Update(user);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Người dùng đã được cập nhật thành công!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -383,6 +386,7 @@ namespace bookstoree.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Người dùng đã được xóa thành công!";
             return RedirectToAction(nameof(Index));
         }
 

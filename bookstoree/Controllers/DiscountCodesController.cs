@@ -95,6 +95,7 @@ namespace bookstoree.Controllers
             {
                 _context.Add(discountCode);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Mã giảm giá đã được thêm thành công!";
                 return RedirectToAction(nameof(Index));
             }
             return View(discountCode);
@@ -136,6 +137,7 @@ namespace bookstoree.Controllers
                 {
                     _context.Update(discountCode);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Mã giảm giá đã được cập nhật thành công!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -185,6 +187,7 @@ namespace bookstoree.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Mã giảm giá đã được xóa thành công!";
             return RedirectToAction(nameof(Index));
         }
 

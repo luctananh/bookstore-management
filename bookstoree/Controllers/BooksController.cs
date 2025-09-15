@@ -130,6 +130,7 @@ namespace bookstoree.Controllers
 
                 _context.Add(book);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Sách đã được thêm thành công!";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
@@ -211,6 +212,7 @@ namespace bookstoree.Controllers
 
                     _context.Update(bookToUpdate); // Now update the tracked entity
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Sách đã được cập nhật thành công!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -274,6 +276,7 @@ namespace bookstoree.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Sách đã được xóa thành công!";
             return RedirectToAction(nameof(Index));
         }
 

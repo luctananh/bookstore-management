@@ -158,6 +158,7 @@ namespace bookstoree.Controllers
             {
                 _context.Add(orderDetail);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Chi tiết đơn hàng đã được thêm thành công!";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BookId"] = new SelectList(_context.Book, "BookId", "Title", orderDetail.BookId); // Changed to Title
@@ -231,6 +232,7 @@ namespace bookstoree.Controllers
                 {
                     _context.Update(orderDetail);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Chi tiết đơn hàng đã được cập nhật thành công!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -307,6 +309,7 @@ namespace bookstoree.Controllers
 
             _context.OrderDetail.Remove(orderDetail);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Chi tiết đơn hàng đã được xóa thành công!";
             return RedirectToAction(nameof(Index));
         }
 

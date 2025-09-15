@@ -189,7 +189,7 @@ namespace bookstoree.Controllers
                     }
                 }
                 await _context.SaveChangesAsync(); // Save order details
-
+                TempData["SuccessMessage"] = "Đơn hàng đã được tạo thành công!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -363,6 +363,7 @@ namespace bookstoree.Controllers
                 {
                     _context.Update(orderToUpdate);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Đơn hàng đã được cập nhật thành công!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -458,6 +459,7 @@ namespace bookstoree.Controllers
 
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Đơn hàng đã được xóa thành công!";
             return RedirectToAction(nameof(Index));
         }
 
