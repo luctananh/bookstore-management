@@ -110,9 +110,9 @@
             function calculateTotal() {
                 var subtotal = 0;
                 $('.order-detail-item').each(function () {
-                    var bookId = parseInt($(this).find('select[name$="BookId"]').val());
+                    var bookId = $(this).find('select[name$="BookId"]').val();
                     var quantity = parseInt($(this).find('input[name$="Quantity"]').val());
-                    if (!isNaN(bookId) && !isNaN(quantity) && bookPrices[bookId]) {
+                    if (bookId && !isNaN(quantity) && bookPrices[bookId]) {
                         subtotal += bookPrices[bookId] * quantity;
                     }
                 });
@@ -121,13 +121,12 @@
                 var total = subtotal;
                 if (discountCode && discountDetails[discountCode]) {
                     var discount = discountDetails[discountCode];
-                    if (subtotal >= discount.MinimumOrder) {
-                        if (discount.DiscountType === 'Percent') {
-                            total = subtotal * (1 - discount.Value / 100);
-                        } else { // Fixed
-                            total = subtotal - discount.Value;
-                        }
-                    }
+                                    if (subtotal >= discount.minimumOrder) {
+                                        if (discount.discountType === 'Percent') {
+                                            total = subtotal * (1 - discount.value / 100);
+                                        } else { // Fixed
+                                            total = subtotal - discount.value;
+                                        }                    }
                 }
 
                 $('#TotalAmount').val(total < 0 ? 0 : total);
@@ -196,8 +195,6 @@
             $(document).on('change', '.order-detail-item select, .order-detail-item input, #DiscountCode', function () {
                 calculateTotal();
             });
-
-            calculateTotal();
         });
     </script>
 }

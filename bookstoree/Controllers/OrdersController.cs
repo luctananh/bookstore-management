@@ -232,11 +232,10 @@ namespace bookstoree.Controllers
             var books = _context.Book.Select(b => new { b.BookId, b.Title, b.Price }).ToList();
             ViewData["BookListForJs"] = books;
             ViewData["Books"] = new SelectList(books, "BookId", "Title");
-            ViewData["BookPrices"] = System.Text.Json.JsonSerializer.Serialize(books.ToDictionary(b => b.BookId, b => b.Price));
+            ViewData["BookPrices"] = books.ToDictionary(b => b.BookId, b => b.Price);
 
             var discounts = _context.DiscountCode.ToList();
-            ViewData["DiscountDetails"] = System.Text.Json.JsonSerializer.Serialize(
-                discounts.ToDictionary(d => d.DiscountCodeId, d => new { d.DiscountType, d.Value, d.MinimumOrder }));
+            ViewData["DiscountDetails"] = discounts.ToDictionary(d => d.DiscountCodeId, d => new { d.DiscountType, d.Value, d.MinimumOrder });
 
             var existingOrderDetailsForJson = order.OrderDetails.Select(od => new
             {

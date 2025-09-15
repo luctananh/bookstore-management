@@ -77,26 +77,7 @@ public class BookstoreDbContext : DbContext
             .HasIndex(od => new { od.OrderId, od.BookId })
             .IsUnique();
 
-        // Decimal precision
-        modelBuilder.Entity<Book>()
-            .Property(b => b.Price)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<OrderDetail>()
-            .Property(od => od.UnitPrice)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<Order>()
-            .Property(o => o.TotalAmount)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<DiscountCode>()
-            .Property(dc => dc.Value)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<DiscountCode>()
-            .Property(dc => dc.MinimumOrder)
-            .HasPrecision(18, 2);
+        // Decimal precision configuration removed to align with the 'int' data type in the models.
 
         // Check constraints
         modelBuilder.Entity<Book>()
