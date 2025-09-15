@@ -1,63 +1,99 @@
-﻿@model bookstoree.Models.Book
+@model bookstoree.Models.Book
 
 @{
     ViewData["Title"] = "Xóa sách";
+    Layout = "_Layout";
 }
 
-<h1>Xóa</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
+                <h1>Xóa sách</h1>
+            </div>
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Xóa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-<h3>Bạn có chắc chắn muốn xóa mục này không?</h3>
-<div>
-    <h4>Sách</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ISBN)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ISBN)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @string.Format("{0:N0} VNĐ", Model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StockQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StockQuantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.CategoryId)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="BookId" />
-        <input type="submit" value="Xóa" class="btn btn-danger" /> |
-        <a asp-action="Index">Quay lại</a>
-    </form>
-</div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">Bạn có chắc chắn muốn xóa mục này không?</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Sách</h4>
+                        <hr />
+                        <dl class="row">
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("ISBN")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.ISBN
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Title")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.Title
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Author")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.Author
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Publisher")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.Publisher
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Price")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @string.Format("{0:N0} VNĐ", Model.Price)
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("StockQuantity")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.StockQuantity
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("ImageUrl")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.ImageUrl
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Category")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @(Model.Category != null ? Model.Category.CategoryName : "N/A")
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <form asp-action="Delete">
+                            <input type="hidden" asp-for="BookId" />
+                            <input type="submit" value="Xóa" class="btn btn-danger" /> |
+                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

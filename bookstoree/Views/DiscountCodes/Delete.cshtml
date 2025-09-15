@@ -2,63 +2,93 @@
 
 @{
     ViewData["Title"] = "Xóa mã giảm giá";
+    Layout = "_Layout";
 }
 
-<h1>Xóa</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
+                <h1>Xóa mã giảm giá</h1>
+            </div>
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Xóa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-<h3>Bạn có chắc chắn muốn xóa mục này không?</h3>
-<div>
-    <h4>Mã giảm giá</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DiscountType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DiscountType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value)
-        </dt>
-        <dd class = "col-sm-10">
-            @if (Model.DiscountType == "Percent")
-            {
-                @string.Format("{0}%", Model.Value)
-            }
-            else
-            {
-                @string.Format("{0:N0} VNĐ", Model.Value)
-            }
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MinimumOrder)
-        </dt>
-        <dd class = "col-sm-10">
-            @string.Format("{0:N0} VNĐ", Model.MinimumOrder)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="DiscountCodeId" />
-        <input type="submit" value="Xóa" class="btn btn-danger" /> |
-        <a asp-action="Index">Quay lại</a>
-    </form>
-</div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">Bạn có chắc chắn muốn xóa mục này không?</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Mã giảm giá</h4>
+                        <hr />
+                        <dl class="row">
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Description")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.Description
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("DiscountType")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.DiscountType
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("Value")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @if (Model.DiscountType == "Percent")
+                                {
+                                    @string.Format("{0}%", Model.Value)
+                                }
+                                else
+                                {
+                                    @string.Format("{0:N0} VNĐ", Model.Value)
+                                }
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("MinimumOrder")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @string.Format("{0:N0} VNĐ", Model.MinimumOrder)
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("StartDate")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.StartDate
+                            </dd>
+                            <dt class = "col-sm-2">
+                                @Html.DisplayName("EndDate")
+                            </dt>
+                            <dd class = "col-sm-10">
+                                @Model.EndDate
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <form asp-action="Delete">
+                            <input type="hidden" asp-for="DiscountCodeId" />
+                            <input type="submit" value="Xóa" class="btn btn-danger" /> |
+                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
