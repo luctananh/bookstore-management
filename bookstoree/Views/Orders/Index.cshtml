@@ -86,7 +86,7 @@
                                         <td>@Html.DisplayFor(modelItem => item.Status)</td>
                                         <td>@Html.DisplayFor(modelItem => item.PaymentMethod)</td>
                                         <td>@string.Format("{0:N0} VNĐ", item.TotalAmount)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.User.UserId)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.User.FullName)</td>
                                         <td>@Html.DisplayFor(modelItem => item.Discount.DiscountCodeId)</td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm btn-info">Sửa</a> |

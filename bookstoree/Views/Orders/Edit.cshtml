@@ -70,7 +70,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="TotalAmount" class="control-label"></label>
-                                <input asp-for="TotalAmount" class="form-control" readonly />
+                                <input asp-for="TotalAmount" class="form-control" />
                                 <span asp-validation-for="TotalAmount" class="text-danger"></span>
                             </div>
 
@@ -110,9 +110,9 @@
             function calculateTotal() {
                 var subtotal = 0;
                 $('.order-detail-item').each(function () {
-                    var bookId = $(this).find('select[name$="BookId"]').val();
-                    var quantity = $(this).find('input[name$="Quantity"]').val();
-                    if (bookId && quantity) {
+                    var bookId = parseInt($(this).find('select[name$="BookId"]').val());
+                    var quantity = parseInt($(this).find('input[name$="Quantity"]').val());
+                    if (!isNaN(bookId) && !isNaN(quantity) && bookPrices[bookId]) {
                         subtotal += bookPrices[bookId] * quantity;
                     }
                 });

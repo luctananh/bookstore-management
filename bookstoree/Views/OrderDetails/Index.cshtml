@@ -39,10 +39,12 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Số lượng</th>
-                                    <th>Đơn giá</th>
-                                    <th>Đơn hàng</th>
+                                    <th>Mã đơn hành</th>
+
+                                    @* <th>Đơn hàng</th> *@
                                     <th>Sách</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
@@ -50,10 +52,11 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
-                                        <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Order.OrderId)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.OrderId)</td>
                                         <td>@Html.DisplayFor(modelItem => item.Book.Title)</td>
+                                        <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td>
+                                        @* <td>@Html.DisplayFor(modelItem => item.Order.OrderId)</td> *@
+                                        <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-info">Sửa</a> |
                                             <a asp-action="Details" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-secondary">Chi tiết</a> |
