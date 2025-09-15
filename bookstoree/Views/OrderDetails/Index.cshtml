@@ -54,7 +54,7 @@
                                     <tr>
                                         <td>@Html.DisplayFor(modelItem => item.OrderId)</td>
                                         <td>@Html.DisplayFor(modelItem => item.Book.Title)</td>
-                                        <td>@string.Format("{0:N0} VNĐ", item.UnitPrice)</td>
+                                        <td>@string.Format("{0:N0} VNĐ", (item.UnitPrice * item.Quantity))</td>
                                         @* <td>@Html.DisplayFor(modelItem => item.Order.OrderId)</td> *@
                                         <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
                                         <td>
