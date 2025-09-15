@@ -9,13 +9,13 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
                 <h1>Order Details</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Order Details</li>
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Chi tiết</li>
                 </ol>
             </div>
         </div>
@@ -106,8 +106,8 @@
                         </table>
                     </div>
                     <div class="card-footer">
-                        <a asp-action="Edit" asp-route-id="@Model?.OrderId" class="btn btn-info">Edit</a> |
-                        <button type="button" onclick="history.back()" class="btn btn-secondary">Back</button>
+                        <a asp-action="Edit" asp-route-id="@Model?.OrderId" class="btn btn-info">Sửa</a> 
+                        <button type="button" onclick="history.back()" class="btn btn-secondary">Quay lại</button>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-@model bookstoree.Models.Book
+﻿@model bookstoree.Models.Book
 
 @{
     ViewData["Title"] = "Create";
@@ -9,13 +9,13 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Create Book</h1>
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
+                <h1>Thêm sản phẩm </h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Create Book</li>
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Thêm</li>
                 </ol>
             </div>
         </div>
@@ -29,7 +29,7 @@
             <div class="col-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Book Details</h3>
+                        <h3 class="card-title">Nhập thông tin sản phẩm</h3>
                     </div>
                     <form asp-action="Create" enctype="multipart/form-data">
                         <div class="card-body">
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="imageFile" class="control-label">Image Upload</label>
+                                        <label for="imageFile" class="control-label">Tải lên hình ảnh</label>
                                         <input type="file" name="imageFile" id="imageFile" class="form-control" onchange="previewImage(event)" />
                                         <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; height: auto; margin-top: 10px; display: none;" />
                                     </div>
@@ -86,8 +86,8 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <input type="submit" value="Create" class="btn btn-primary" />
-                            <button type="button" onclick="history.back()" class="btn btn-secondary">Back</button>
+                            <input type="submit" value="Tạo mới" class="btn btn-primary" />
+                            <button type="button" onclick="history.back()" class="btn btn-secondary">Quay lại</button>
                         </div>
                     </form>
                 </div>
