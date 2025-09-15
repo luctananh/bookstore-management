@@ -1,7 +1,5 @@
-@model bookstoree.Models.Book
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết sách";
     Layout = "_Layout";
 }
 
@@ -35,59 +33,59 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <dl class="row">
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.ISBN)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("ISBN")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.ISBN)
+                                    <dd class="col-sm-8">
+                                        @Model.ISBN
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.Title)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("Title")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.Title)
+                                    <dd class="col-sm-8">
+                                        @Model.Title
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.Author)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("Author")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.Author)
+                                    <dd class="col-sm-8">
+                                        @Model.Author
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.Publisher)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("Publisher")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.Publisher)
+                                    <dd class="col-sm-8">
+                                        @Model.Publisher
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.Price)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("Price")
                                     </dt>
-                                    <dd class = "col-sm-8">
+                                    <dd class="col-sm-8">
                                         @string.Format("{0:N0} VNĐ", Model.Price)
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.StockQuantity)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("StockQuantity")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.StockQuantity)
+                                    <dd class="col-sm-8">
+                                        @Model.StockQuantity
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.Category)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("Category")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.Category.CategoryName)
+                                    <dd class="col-sm-8">
+                                        @Model.Category.CategoryName
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.Description)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("Description")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.Description)
+                                    <dd class="col-sm-8">
+                                        @Model.Description
                                     </dd>
-                                    <dt class = "col-sm-4">
-                                        @Html.DisplayNameFor(model => model.DateAdded)
+                                    <dt class="col-sm-4">
+                                        @Html.DisplayName("DateAdded")
                                     </dt>
-                                    <dd class = "col-sm-8">
-                                        @Html.DisplayFor(model => model.DateAdded)
+                                    <dd class="col-sm-8">
+                                        @Model.DateAdded
                                     </dd>
                                 </dl>
                             </div>
@@ -98,13 +96,13 @@
                                 }
                                 else
                                 {
-                                    <p>No Image Available</p>
+                                    <p>Không có hình ảnh</p>
                                 }
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a asp-action="Edit" asp-route-id="@Model?.BookId" class="btn btn-info">Sửa</a> |
+                        <a asp-action="Edit" asp-route-id="@Model?.BookId" class="btn btn-info">Sửa</a>
                         <button type="button" onclick="history.back()" class="btn btn-secondary">Quay lại</button>
                     </div>
                 </div>

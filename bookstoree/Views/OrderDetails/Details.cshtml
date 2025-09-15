@@ -1,7 +1,5 @@
-@model bookstoree.Models.OrderDetail
-
 @{
-    ViewData["Title"] = "Order Detail Details";
+    ViewData["Title"] = "Chi tiết đơn hàng";
     Layout = "_Layout";
 }
 
@@ -10,7 +8,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
-                <h1>Order Detail Details</h1>
+                <h1>Chi tiết đơn hàng</h1>
             </div>
             <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
                 <ol class="breadcrumb float-sm-right">
@@ -29,33 +27,33 @@
             <div class="col-md-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Order Detail Information</h3>
+                        <h3 class="card-title">Thông tin chi tiết đơn hàng</h3>
                     </div>
                     <div class="card-body">
-                        <dl class="row">
+                        <dl class = "row">
                             <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.Quantity)
+                                @Html.DisplayName("Quantity")
                             </dt>
                             <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Quantity)
+                                @Model.Quantity
                             </dd>
                             <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.UnitPrice)
+                                @Html.DisplayName("UnitPrice")
                             </dt>
                             <dd class = "col-sm-8">
                                 @string.Format("{0:N0} VNĐ", Model.UnitPrice)
                             </dd>
                             <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.Order)
+                                @Html.DisplayName("Order")
                             </dt>
                             <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Order.OrderDate) - @Html.DisplayFor(model => model.Order.User.UserName)
+                                @Model.Order.OrderDate - @Model.Order.User.UserName
                             </dd>
                             <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.Book)
+                                @Html.DisplayName("Book")
                             </dt>
                             <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Book.Title)
+                                @Model.Book.Title
                             </dd>
                         </dl>
                     </div>

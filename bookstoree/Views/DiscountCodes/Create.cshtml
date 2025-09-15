@@ -1,7 +1,7 @@
 @model bookstoree.Models.DiscountCode
 
 @{
-    ViewData["Title"] = "Create Discount Code";
+    ViewData["Title"] = "Tạo mã giảm giá";
     Layout = "_Layout";
 }
 
@@ -10,7 +10,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
-                <h1>Create Discount Code</h1>
+                <h1>Tạo mã giảm giá</h1>
             </div>
             <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
                 <ol class="breadcrumb float-sm-right">
@@ -29,7 +29,7 @@
             <div class="col-md-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Discount Code Details</h3>
+                        <h3 class="card-title">Chi tiết mã giảm giá</h3>
                     </div>
                     <form asp-action="Create">
                         <div class="card-body">
@@ -47,8 +47,8 @@
                             <div class="form-group">
                                 <label asp-for="DiscountType" class="control-label"></label>
                                 <select asp-for="DiscountType" class="form-control">
-                                    <option value="Percent">Percent</option>
-                                    <option value="Fixed">Fixed</option>
+                                    <option value="Percent">Phần trăm</option>
+                                    <option value="Fixed">Cố định</option>
                                 </select>
                                 <span asp-validation-for="DiscountType" class="text-danger"></span>
                             </div>
