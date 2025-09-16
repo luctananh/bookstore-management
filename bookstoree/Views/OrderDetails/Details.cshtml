@@ -43,7 +43,7 @@
                                         @Html.DisplayName("UnitPrice")
                                     </dt>
                                     <dd class = "col-sm-8">
-                                        @string.Format("{0:N0} VNĐ", Model.UnitPrice)
+                                        @string.Format("{0:N0} VNĐ", Model.UnitPrice * Model.Quantity)
                                     </dd>
                                     <dt class = "col-sm-4">
                                         @Html.DisplayName("Order")

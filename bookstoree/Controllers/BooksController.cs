@@ -110,32 +110,38 @@ namespace bookstoree.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile imageFile)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (imageFile != null && imageFile.Length > 0)
-                {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "books");
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imageFile.CopyToAsync(fileStream);
-                    }
-                    book.ImageUrl = "/images/books/" + uniqueFileName;
-                }
-
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Sách đã được thêm thành công!";
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = "Có lỗi khi tạo sản phẩm";
+                ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
+                return View(book);
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
-            return View(book);
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "books");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(fileStream);
+                }
+                book.ImageUrl = "/images/books/" + uniqueFileName;
+            }
+
+            _context.Add(book);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Thêm sách thành công!";
+            return RedirectToAction("Index");
+
+            TempData["ErrorMessage"] = "Có lỗi xảy ra khi thêm sách!";
+            return RedirectToAction("Create");
         }
+
 
         // GET: Books/Edit/5
         [Authorize(Roles = "Admin")]
