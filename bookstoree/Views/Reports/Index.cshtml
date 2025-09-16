@@ -19,42 +19,37 @@
         </div>
     </div><!-- /.container-fluid -->
 </section>
-
-<!-- Main content -->
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card card-primary card-outline">
-                    <div class="card-header">
-                        <h3 class="card-title">Thống kê cơ bản</h3>
-                    </div>
-                    <div class="card-body">
-                        <dl class="row">
-                            <dt class="col-sm-6">Tổng số đơn hàng:</dt>
-                            <dd class="col-sm-6">@ViewData["TotalOrders"]</dd>
-
-                            <dt class="col-sm-6">Tổng doanh thu:</dt>
-                            <dd class="col-sm-6">@string.Format("{0:N0} VNĐ", ViewData["TotalRevenue"])</dd>
-
-                            <dt class="col-sm-6">Tổng số sách đã bán:</dt>
-                            <dd class="col-sm-6">@ViewData["TotalBooksSold"]</dd>
-                        </dl>
-                    </div>
-                </div>
+<div class="card">
+    <div class="card-body">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Thống kê cơ bản</h3>
             </div>
-            <div class="col-md-6">
-                <div class="card card-info card-outline">
-                    <div class="card-header">
-                        <h3 class="card-title">Báo cáo chi tiết</h3>
-                    </div>
-                    <div class="card-body">
-                        <p><a asp-action="SalesByCategory" class="btn btn-block btn-outline-info">Xem doanh số theo danh mục</a></p>
-                        <p><a asp-action="TopSellingBooks" class="btn btn-block btn-outline-info">Xem sách bán chạy nhất</a></p>
-                        <p><a asp-action="SalesByUser" class="btn btn-block btn-outline-info">Xem doanh số theo người dùng</a></p>
-                    </div>
-                </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-6">Tổng số đơn hàng:</dt>
+                    <dd class="col-sm-6">@ViewData["TotalOrders"]</dd>
+                    <dt class="col-sm-6">Tổng doanh thu:</dt>
+                    <dd class="col-sm-6">@string.Format("{0:N0} VNĐ", ViewData["TotalRevenue"])</dd>
+                    <dt class="col-sm-6">Tổng số sách đã bán:</dt>
+                    <dd class="col-sm-6">@ViewData["TotalBooksSold"]</dd>
+                </dl>
             </div>
         </div>
     </div>
-</section>
+    <div class="card-body">
+        <p>Chọn loại báo cáo bạn muốn xem:</p>
+        <div class="list-group">
+            <a asp-controller="Reports" asp-action="SalesByCategory" class="list-group-item list-group-item-action">
+                <i class="fas fa-chart-bar mr-2"></i> Doanh số theo danh mục
+            </a>
+            <a asp-controller="Reports" asp-action="SalesByUser" class="list-group-item list-group-item-action">
+                <i class="fas fa-users mr-2"></i> Doanh số theo người dùng
+            </a>
+            <a asp-controller="Reports" asp-action="TopSellingBooks" class="list-group-item list-group-item-action">
+                <i class="fas fa-book-open mr-2"></i> Sách bán chạy nhất
+            </a>
+        </div>
+    </div>
+</div>
+

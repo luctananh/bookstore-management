@@ -1,10 +1,13 @@
 @{
     ViewData["Title"] = "Truy cập bị từ chối";
+    Layout = "_Layout"; // Ensure it uses the main layout
 }
 
-<h1 class="text-danger">Truy cập bị từ chối</h1>
-<h2 class="text-danger">Bạn không có quyền xem tài nguyên này.</h2>
-
-<div>
-    <button type="button" onclick="history.back()" class="btn btn-secondary">Quay lại</button>
+<div class="container text-center mt-5">
+    <h1 class="display-4 text-danger">403</h1>
+    <h2 class="text-danger">Truy cập bị từ chối</h2>
+    <p class="lead">Bạn không có quyền xem tài nguyên này.</p>
+    <p>Vui lòng liên hệ quản trị viên nếu bạn tin rằng đây là một lỗi.</p>
+    <hr class="my-4">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">Quay về trang chủ</a>
 </div>
