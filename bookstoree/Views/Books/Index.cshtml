@@ -82,7 +82,16 @@
                                         <td>@Html.DisplayFor(modelItem => item.Author)</td>
                                         <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
                                         <td>@string.Format("{0:N0} VNĐ", item.Price)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.StockQuantity)</td>
+                                        <td>
+                                            @if (item.StockQuantity == 0)
+                                            {
+                                                <span>Hết hàng</span>
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.StockQuantity)
+                                            }
+                                        </td>
                                         <td>
                                             @if (!string.IsNullOrEmpty(item.ImageUrl))
                                             {

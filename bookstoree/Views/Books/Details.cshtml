@@ -67,13 +67,20 @@
                                         @Html.DisplayName("StockQuantity")
                                     </dt>
                                     <dd class="col-sm-8">
-                                        @Model.StockQuantity
+                                        @if (Model.StockQuantity == 0)
+                                        {
+                                            <span>Hết hàng</span>
+                                        }
+                                        else
+                                        {
+                                            @Model.StockQuantity
+                                        }
                                     </dd>
                                     <dt class="col-sm-4">
                                         @Html.DisplayName("Category")
                                     </dt>
                                     <dd class="col-sm-8">
-                                        @(Model.Category != null ? Model.Category.CategoryName : "N/A")
+                                        @(Model.Category != null ? Model.Category.Name : "N/A")
                                     </dd>
                                     <dt class="col-sm-4">
                                         @Html.DisplayName("Description")

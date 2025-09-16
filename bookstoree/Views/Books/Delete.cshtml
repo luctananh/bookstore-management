@@ -32,68 +32,74 @@
                         <h3 class="card-title">Bạn có chắc chắn muốn xóa mục này không?</h3>
                     </div>
                     <div class="card-body">
-                        <h4>Sách</h4>
-                        <hr />
-                        <dl class="row">
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("ISBN")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @Model.ISBN
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("Title")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @Model.Title
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("Author")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @Model.Author
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("Publisher")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @Model.Publisher
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("Price")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @string.Format("{0:N0} VNĐ", Model.Price)
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("StockQuantity")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @Model.StockQuantity
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("ImageUrl")
-                            </dt>
-                            <dd class = "col-sm-10">
-                                @Model.ImageUrl
-                            </dd>
-                            <dt class = "col-sm-2">
-                                @Html.DisplayName("Category")
-                            </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
-        </dd>
-                        </dl>
-                    </div>
-                    <div class="card-footer">
-                        <form asp-action="Delete">
-                            <input type="hidden" asp-for="BookId" />
-                            <input type="submit" value="Xóa" class="btn btn-danger" /> |
-                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-                        </form>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <dl class="row">
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("ISBN")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @Model.ISBN
+                                    </dd>
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("Title")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @Model.Title
+                                    </dd>
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("Author")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @Model.Author
+                                    </dd>
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("Publisher")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @Model.Publisher
+                                    </dd>
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("Price")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @string.Format("{0:N0} VNĐ", Model.Price)
+                                    </dd>
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("StockQuantity")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @Model.StockQuantity
+                                    </dd>
+                                    <dt class="col-sm-2">
+                                        @Html.DisplayName("Category")
+                                    </dt>
+                                    <dd class="col-sm-10">
+                                        @Html.DisplayFor(model => model.Category.Name)
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" alt="Book Image" class="img-fluid" style="max-height: 300px;" />
+                                }
+                                else
+                                {
+                                    <p>Không có hình ảnh</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <form asp-action="Delete">
+                                <input type="hidden" asp-for="BookId" />
+                                <input type="submit" value="Xóa" class="btn btn-danger" /> |
+                                <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </section>

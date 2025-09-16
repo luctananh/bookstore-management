@@ -88,7 +88,7 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,StoreId")] Category category)
+        public async Task<IActionResult> Create([Bind("CategoryId,Name,StoreId")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -131,7 +131,7 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,StoreId")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,Name,StoreId")] Category category)
         {
             if (id != category.CategoryId)
             {

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using bookstoree.Models.ViewModels;
 using bookstoree.Services;
+using System.Diagnostics;
 
 namespace bookstoree.Controllers
 {
@@ -38,23 +39,39 @@ namespace bookstoree.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(int storeId, string username, string password)
         {
+            Debug.WriteLine($"Login attempt: StoreId={storeId}, Username={username}, Password={password}");
+
             // First, find the store
             var store = await _context.Store.FirstOrDefaultAsync(s => s.StoreId == storeId);
             if (store == null)
             {
+                Debug.WriteLine($"Store with ID {storeId} not found.");
                 ModelState.AddModelError(string.Empty, "Mã cửa hàng không tồn tại.");
                 return View();
             }
+            Debug.WriteLine($"Store found: Name={store.Name}, StoreId={store.StoreId}");
 
             // Then, find the user within that store
             var user = await _context.User
+                                     .IgnoreQueryFilters() // Ignore global filters for this query
                                      .FirstOrDefaultAsync(u => u.UserName == username && u.StoreId == store.StoreId);
 
-            if (user == null || user.PasswordHash != password) // In a real app, hash and verify password
+            if (user == null)
             {
+                Debug.WriteLine($"User {username} not found in store {storeId}.");
                 ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
                 return View();
             }
+
+            Debug.WriteLine($"User found: UserId={user.UserId}, UserName={user.UserName}, StoredPasswordHash={user.PasswordHash}");
+            if (user.PasswordHash != password) // In a real app, hash and verify password
+            {
+                Debug.WriteLine($"Password mismatch for user {username}. Entered: {password}, Stored: {user.PasswordHash}");
+                ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
+                return View();
+            }
+
+            Debug.WriteLine($"Login successful for user {username} in store {storeId}.");
 
             // Add StoreId to claims (already done in Register, but ensure it's here too for direct login)
             var claims = new List<Claim>
@@ -188,16 +205,17 @@ namespace bookstoree.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUser([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber,Role,StoreId")] User user)
         {
-            var currentStoreId = _currentStoreService.GetCurrentStoreId();
-            if (!currentStoreId.HasValue)
-            {
-                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
-                return RedirectToAction("AccessDenied", "Home");
-            }
-            user.StoreId = currentStoreId.Value;
-
             if (ModelState.IsValid)
             {
+                var currentStoreId = _currentStoreService.GetCurrentStoreId();
+                if (!currentStoreId.HasValue)
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                    return RedirectToAction("AccessDenied", "Home");
+                }
+                user.StoreId = currentStoreId.Value; // Assign the StoreId here
+                Debug.WriteLine($"CreateUser: Assigning StoreId={user.StoreId} to user {user.UserName}");
+
                 // Check if username or email already exists within the current store
                 if (await _context.User.AnyAsync(u => u.StoreId == currentStoreId.Value && (u.UserName == user.UserName || u.Email == user.Email)))
                 {
@@ -215,10 +233,13 @@ namespace bookstoree.Controllers
                 }
 
                 _context.Add(user);
+                Debug.WriteLine($"CreateUser: Attempting to save user {user.UserName} with StoreId {user.StoreId}");
                 await _context.SaveChangesAsync();
+                Debug.WriteLine($"CreateUser: User {user.UserName} saved successfully with UserId {user.UserId}");
                 TempData["SuccessMessage"] = "Người dùng đã được tạo thành công!";
                 return RedirectToAction(nameof(Index)); // Redirect to user list after creation
             }
+            Debug.WriteLine($"CreateUser: ModelState is invalid. Errors: {string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))}");
             ViewBag.Roles = new List<string> { "Admin", "Staff" };
             return View(user);
         }
@@ -331,9 +352,18 @@ namespace bookstoree.Controllers
         }
 
         // GET: Users/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            return View();
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            var user = new User { StoreId = currentStoreId.Value };
+            ViewBag.Roles = new List<string> { "Admin", "Staff" }; // Populate roles for dropdown
+            return View(user);
         }
 
         // POST: Users/Create
@@ -341,10 +371,27 @@ namespace bookstoree.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,UserName,PasswordHash,FullName,Email,PhoneNumber,Role")] User user)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("UserId,UserName,PasswordHash,FullName,Email,PhoneNumber,Role,StoreId")] User user)
         {
             if (ModelState.IsValid)
             {
+                var currentStoreId = _currentStoreService.GetCurrentStoreId();
+                if (!currentStoreId.HasValue)
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                    return RedirectToAction("AccessDenied", "Home");
+                }
+                user.StoreId = currentStoreId.Value;
+
+                // Check if username or email already exists within the current store
+                if (await _context.User.AnyAsync(u => u.StoreId == currentStoreId.Value && (u.UserName == user.UserName || u.Email == user.Email)))
+                {
+                    ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc Email đã tồn tại trong cửa hàng này.");
+                    ViewBag.Roles = new List<string> { "Admin", "Staff" };
+                    return View(user);
+                }
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
