@@ -349,7 +349,7 @@ namespace bookstoree.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Edit), new { id = user.UserId });
             }
             return View(user);
         }
