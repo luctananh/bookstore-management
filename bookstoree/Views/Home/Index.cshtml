@@ -7,9 +7,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
-                <h1>Chào mừng đến với Hệ thống Quản lý Nhà sách</h1>
-            </div>
+            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;"></div>
             <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
@@ -20,15 +18,25 @@
 </section>
 
 <!-- Main content -->
-<section class="content">
+<section class="content" style="
+    background-image: url('https://images.pexels.com/photos/2908984/pexels-photo-2908984.jpeg');
+    background-size: cover;
+    background-position: center;
+    width: 100vw;       /* chiếm toàn bộ chiều rộng */
+    height: 100vh;      /* chiếm toàn bộ chiều cao viewport */
+    display: flex;
+    justify-content: center; /* căn giữa theo ngang */
+    align-items: center;     /* căn giữa theo dọc */
+">
+
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Tổng quan Bảng điều khiển</h3>
-                    </div>
-                    <div class="card-body">
+        <div class="row justify-content-center w-100">
+            <div class="col-12 col-md-8">
+                <div class="card" style="background-color: rgba(255,255,255,0.8); text-align: center; padding: 20px;">
+                    <!-- Tiêu đề chính căn giữa -->
+                    <h1 style="margin-bottom: 20px;">Chào mừng đến với Hệ thống Quản lý Nhà sách</h1>
+
+                    <div class="card-body" style="text-align: center;">
                         <p>Sử dụng thanh bên để điều hướng qua các phần quản lý khác nhau.</p>
                     </div>
                 </div>
@@ -36,3 +44,5 @@
         </div>
     </div>
 </section>
+
+
