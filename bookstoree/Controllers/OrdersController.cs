@@ -197,6 +197,10 @@ namespace bookstoree.Controllers
                         var book = await _context.Book.FindAsync(item.BookId);
                         if (book != null)
                         {
+                            // Deduct stock quantity
+                            book.StockQuantity -= item.Quantity;
+                            _context.Update(book); // Mark book as modified
+
                             var orderDetail = new OrderDetail
                             {
                                 OrderId = viewModel.Order.OrderId,
@@ -475,7 +479,11 @@ namespace bookstoree.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Order.FindAsync(id);
+            var order = await _context.Order
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Book)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+
             if (order == null)
             {
                 return NotFound(); // Order not found
@@ -491,6 +499,17 @@ namespace bookstoree.Controllers
                 }
             }
             // Admin users can delete any order
+
+            // Replenish stock for each book in the order
+            foreach (var detail in order.OrderDetails)
+            {
+                var book = await _context.Book.FindAsync(detail.BookId);
+                if (book != null)
+                {
+                    book.StockQuantity += detail.Quantity;
+                    _context.Update(book); // Mark book as modified
+                }
+            }
 
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();

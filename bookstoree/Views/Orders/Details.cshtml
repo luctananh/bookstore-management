@@ -105,7 +105,8 @@
                         </table>
                     </div>
                     <div class="card-footer">
-                        <a asp-action="Edit" asp-route-id="@Model?.OrderId" class="btn btn-info">Sửa</a> 
+                        <a asp-action="Edit" asp-route-id="@Model?.OrderId" class="btn btn-info">Sửa</a> |
+                        <a asp-action="Delete" asp-route-id="@Model?.OrderId" class="btn btn-warning">Hoàn đơn</a> |
                         <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
                     </div>
                 </div>

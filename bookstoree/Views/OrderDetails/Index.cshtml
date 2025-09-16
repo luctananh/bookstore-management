@@ -58,8 +58,8 @@
                                         <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
                                         <td>
                                             @* <a asp-action="Edit" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-info">Sửa</a> | *@
-                                            <a asp-action="Details" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-secondary">Chi tiết</a> |
-                                            <a asp-action="Delete" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-danger">Xóa</a>
+                                            <a asp-action="Details" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-secondary">Chi tiết</a> 
+                                            @* <a asp-action="Delete" asp-route-id="@item.OrderDetailId" class="btn btn-sm btn-danger">Xóa</a> *@
                                         </td>
                                     </tr>
                                 }
