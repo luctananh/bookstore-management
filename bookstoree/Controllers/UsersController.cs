@@ -86,7 +86,7 @@ namespace bookstoree.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber,Role")] User user)
+        public async Task<IActionResult> Register([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -97,11 +97,7 @@ namespace bookstoree.Controllers
                     return View(user);
                 }
 
-                // Set default role to 'Customer' if not provided or if it's not 'Admin' or 'Staff'
-                if (string.IsNullOrEmpty(user.Role) || (user.Role != "Admin" && user.Role != "Staff"))
-                {
-                    user.Role = "Customer";
-                }
+                user.Role = "Admin"; // Gán vai trò Admin cho người dùng mới
 
                 _context.Add(user);
                 await _context.SaveChangesAsync();
@@ -135,7 +131,7 @@ namespace bookstoree.Controllers
         public IActionResult CreateUser()
         {
             // Populate roles for dropdown if needed
-            ViewBag.Roles = new List<string> { "Admin", "Staff", "Customer" };
+            ViewBag.Roles = new List<string> { "Admin", "Staff" };
             return View();
         }
 
@@ -151,15 +147,15 @@ namespace bookstoree.Controllers
                 if (await _context.User.AnyAsync(u => u.UserName == user.UserName || u.Email == user.Email))
                 {
                     ModelState.AddModelError(string.Empty, "Username or Email already exists.");
-                    ViewBag.Roles = new List<string> { "Admin", "Staff", "Customer" };
+                    ViewBag.Roles = new List<string> { "Admin", "Staff" };
                     return View(user);
                 }
 
-                // Ensure the role is valid (Admin, Staff, Customer)
-                if (!new List<string> { "Admin", "Staff", "Customer" }.Contains(user.Role))
+                // Ensure the role is valid (Admin, Staff)
+                if (!new List<string> { "Admin", "Staff" }.Contains(user.Role))
                 {
                     ModelState.AddModelError(string.Empty, "Invalid role specified.");
-                    ViewBag.Roles = new List<string> { "Admin", "Staff", "Customer" };
+                    ViewBag.Roles = new List<string> { "Admin", "Staff" };
                     return View(user);
                 }
 
@@ -168,7 +164,7 @@ namespace bookstoree.Controllers
                 TempData["SuccessMessage"] = "Người dùng đã được tạo thành công!";
                 return RedirectToAction(nameof(Index)); // Redirect to user list after creation
             }
-            ViewBag.Roles = new List<string> { "Admin", "Staff", "Customer" };
+            ViewBag.Roles = new List<string> { "Admin", "Staff" };
             return View(user);
         }
 

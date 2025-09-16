@@ -513,7 +513,7 @@ namespace bookstoree.Controllers
 
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Đơn hàng đã được xóa thành công!";
+            TempData["SuccessMessage"] = "Đơn hàng đã được hoàn thành công!";
             return RedirectToAction(nameof(Index));
         }
 

@@ -26,7 +26,7 @@ namespace bookstoree.Models
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ.")]
         public string? PhoneNumber { get; set; }
         [DisplayName("Vai trò")]
-        public string Role { get; set; } = "Customer"; // "Admin", "Staff", "Customer"
+        public string Role { get; set; } = "Admin"; // "Admin", "Staff"
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     }
