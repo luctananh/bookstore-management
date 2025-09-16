@@ -2,12 +2,22 @@
     ViewData["Title"] = "Truy cập bị từ chối";
     Layout = "_Layout"; // Ensure it uses the main layout
 }
-
-<div class="container text-center mt-5">
-    <h1 class="display-4 text-danger">403</h1>
-    <h2 class="text-danger">Truy cập bị từ chối</h2>
-    <p class="lead">Bạn không có quyền xem tài nguyên này.</p>
-    <p>Vui lòng liên hệ quản trị viên nếu bạn tin rằng đây là một lỗi.</p>
-    <hr class="my-4">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">Quay về trang chủ</a>
-</div>
+<section class="content" style="
+    background-image: url('https://images.pexels.com/photos/2908984/pexels-photo-2908984.jpeg');
+    background-size: cover;
+    background-position: center;
+    width: 100vw;       /* chiếm toàn bộ chiều rộng */
+    height: 100vh;      /* chiếm toàn bộ chiều cao viewport */
+    display: flex;
+    justify-content: center; /* căn giữa theo ngang */
+    align-items: center;     /* căn giữa theo dọc */
+">
+    <div class="container text-center mt-5" class="card" style="background-color: rgba(255,255,255,0.8); text-align: center; padding: 20px;">
+        <h1 class="display-4 text-danger">403</h1>
+        <h2 class="text-danger">Truy cập bị từ chối</h2>
+        <p class="lead">Bạn không có quyền xem tài nguyên này.</p>
+        <p>Vui lòng liên hệ quản trị viên nếu bạn tin rằng đây là một lỗi.</p>
+        <hr class="my-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">Quay về trang chủ</a>
+    </div>
+</section>

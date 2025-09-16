@@ -5,72 +5,78 @@
     Layout = "_Layout";
 }
 
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
-                <h1>Chi tiết người dùng</h1>
-            </div>
-            <div class="col-sm-6" style="display: flex ; justify-content: flex-end;">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                    <li class="breadcrumb-item active">Chi tiết</li>
-                </ol>
-            </div>
-        </div>
-    </div><!-- /.container-fluid -->
-</section>
-
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-primary">
-                    <div class="card-header">
+                    <div class="card-header" style="margin-bottom:15px">
                         <h3 class="card-title">Thông tin người dùng</h3>
                     </div>
-                    <div class="card-body">
-                        <dl class="row">
-                            <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.UserName)
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.UserName)
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.PasswordHash)
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.PasswordHash)
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.FullName)
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.FullName)
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.Email)
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Email)
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.PhoneNumber)
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.PhoneNumber)
-                            </dd>
-                            <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.Role)
-                            </dt>
-                            <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Role)
-                            </dd>
-                        </dl>
+                    @* <div class="container py-5"> *@
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card" style="margin-bottom:0px">
+                                <div class="card-body text-center">
+                                    <img src="https://www.svgrepo.com/show/420342/avatar-male-president.svg" alt="avatar" class="rounded-circle img-fluid" style="width: 157px;">
+                                    <h5 class="my-3">@Model.FullName</h5>
+                                    <p class="text-muted mb-3">Vai trò: @Model.Role</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Họ và tên</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">@Model.FullName</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Email</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">@Model.Email</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Số điện thoại</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">@Model.PhoneNumber</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Tên tài khoản</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">@Model.UserName</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Mật khẩu</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">@Model.PasswordHash</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    @* </div> *@
                     <div class="card-footer">
                         <a asp-action="Edit" asp-route-id="@Model?.UserId" class="btn btn-info">Sửa</a> |
                         <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Quay lại</a>
