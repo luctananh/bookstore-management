@@ -54,7 +54,7 @@
         }
     </style>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini sidebar-mini-md layout-fixed" style="background-image: url('https://images.pexels.com/photos/2908984/pexels-photo-2908984.jpeg'); background-size: cover; background-position: center;">
     <div class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -464,6 +464,24 @@
         DropzoneJS Demo Code End
     </script>
     @RenderSection("scripts", required:false)
+    <script>
+        $(document).ready(function () {
+            // Check for sidebar state in local storage on page load
+            if (localStorage.getItem('sidebarState') === 'collapsed') {
+                $('body').addClass('sidebar-collapse');
+            }
+
+            // Listen for sidebar collapse event
+            $('[data-widget="pushmenu"]').on('collapsed.lte.pushmenu', function () {
+                localStorage.setItem('sidebarState', 'collapsed');
+            });
+
+            // Listen for sidebar expand event
+            $('[data-widget="pushmenu"]').on('expanded.lte.pushmenu', function () {
+                localStorage.setItem('sidebarState', 'expanded');
+            });
+        });
+    </script>
 </body>
 </html>
 
