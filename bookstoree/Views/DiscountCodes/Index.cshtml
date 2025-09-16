@@ -39,6 +39,7 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>Mã Giảm giá</th>
                                     <th>Mô tả</th>
                                     <th>Loại giảm giá</th>
                                     <th>Giá trị</th>
@@ -52,6 +53,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.DiscountCodeId)</td>
                                         <td>@Html.DisplayFor(modelItem => item.Description)</td>
                                         <td>@Html.DisplayFor(modelItem => item.DiscountType)</td>
                                         <td>
