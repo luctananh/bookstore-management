@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace bookstoree.Models
 {
@@ -28,6 +29,13 @@ namespace bookstoree.Models
         [DisplayName("Ngày kết thúc")]
         [Required(ErrorMessage = "Trường Ngày kết thúc là bắt buộc.")]
         public DateTime EndDate { get; set; } // End date of the discount code validity
+        public decimal DiscountAmount { get; set; }
+
+        [DisplayName("Mã cửa hàng")]
+        public int? StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public virtual Store? Store { get; set; }
+
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     }

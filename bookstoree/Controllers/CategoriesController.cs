@@ -9,15 +9,19 @@ using bookstoree.Data;
 using bookstoree.Models;
 using Microsoft.AspNetCore.Authorization;
 
+using bookstoree.Services;
+
 namespace bookstoree.Controllers
 {
     public class CategoriesController : Controller
     {
         private readonly bookstoreeContext _context;
+        private readonly CurrentStoreService _currentStoreService;
 
-        public CategoriesController(bookstoreeContext context)
+        public CategoriesController(bookstoreeContext context, CurrentStoreService currentStoreService)
         {
             _context = context;
+            _currentStoreService = currentStoreService;
         }
 
         // GET: Categories
@@ -29,7 +33,7 @@ namespace bookstoree.Controllers
 
             var searchFields = new Dictionary<string, string>
             {
-                { "CategoryName", "Tên danh mục" }
+                { "Name", "Tên danh mục" }
             };
             ViewData["SearchFields"] = searchFields;
 
@@ -40,11 +44,11 @@ namespace bookstoree.Controllers
             {
                 switch (searchField)
                 {
-                    case "CategoryName":
-                        categories = categories.Where(s => s.CategoryName.Contains(searchString));
+                    case "Name":
+                        categories = categories.Where(s => s.Name.Contains(searchString));
                         break;
                     default:
-                        categories = categories.Where(s => s.CategoryName.Contains(searchString));
+                        categories = categories.Where(s => s.Name.Contains(searchString));
                         break;
                 }
             }
@@ -84,10 +88,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName")] Category category)
+        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,StoreId")] Category category)
         {
             if (ModelState.IsValid)
             {
+                var currentStoreId = _currentStoreService.GetCurrentStoreId();
+                if (!currentStoreId.HasValue)
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                    return RedirectToAction("AccessDenied", "Home");
+                }
+                category.StoreId = currentStoreId.Value;
+
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Danh mục đã được thêm thành công!";
@@ -119,11 +131,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,StoreId")] Category category)
         {
             if (id != category.CategoryId)
             {
                 return NotFound();
+            }
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue || category.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền chỉnh sửa danh mục này.";
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             if (ModelState.IsValid)
@@ -176,11 +195,20 @@ namespace bookstoree.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = await _context.Category.FindAsync(id);
-            if (category != null)
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+
+            if (category == null)
             {
-                _context.Category.Remove(category);
+                return NotFound();
             }
 
+            if (!currentStoreId.HasValue || category.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền xóa danh mục này.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            _context.Category.Remove(category);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Danh mục đã được xóa thành công!";
             return RedirectToAction(nameof(Index));

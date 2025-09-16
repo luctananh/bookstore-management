@@ -9,15 +9,19 @@ using bookstoree.Data;
 using bookstoree.Models;
 using Microsoft.AspNetCore.Authorization;
 
+using bookstoree.Services;
+
 namespace bookstoree.Controllers
 {
     public class DiscountCodesController : Controller
     {
         private readonly bookstoreeContext _context;
+        private readonly CurrentStoreService _currentStoreService;
 
-        public DiscountCodesController(bookstoreeContext context)
+        public DiscountCodesController(bookstoreeContext context, CurrentStoreService currentStoreService)
         {
             _context = context;
+            _currentStoreService = currentStoreService;
         }
 
         // GET: DiscountCodes
@@ -89,10 +93,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscountCodeId,Description,DiscountType,Value,MinimumOrder,StartDate,EndDate")] DiscountCode discountCode)
+        public async Task<IActionResult> Create([Bind("DiscountCodeId,Description,DiscountType,Value,MinimumOrder,StartDate,EndDate,StoreId")] DiscountCode discountCode)
         {
             if (ModelState.IsValid)
             {
+                var currentStoreId = _currentStoreService.GetCurrentStoreId();
+                if (!currentStoreId.HasValue)
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                    return RedirectToAction("AccessDenied", "Home");
+                }
+                discountCode.StoreId = currentStoreId.Value;
+
                 _context.Add(discountCode);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Mã giảm giá đã được thêm thành công!";
@@ -124,11 +136,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("DiscountCodeId,Description,DiscountType,Value,MinimumOrder,StartDate,EndDate")] DiscountCode discountCode)
+        public async Task<IActionResult> Edit(string id, [Bind("DiscountCodeId,Description,DiscountType,Value,MinimumOrder,StartDate,EndDate,StoreId")] DiscountCode discountCode)
         {
             if (id != discountCode.DiscountCodeId)
             {
                 return NotFound();
+            }
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue || discountCode.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền chỉnh sửa mã giảm giá này.";
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             if (ModelState.IsValid)
@@ -181,11 +200,20 @@ namespace bookstoree.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var discountCode = await _context.DiscountCode.FindAsync(id);
-            if (discountCode != null)
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+
+            if (discountCode == null)
             {
-                _context.DiscountCode.Remove(discountCode);
+                return NotFound();
             }
 
+            if (!currentStoreId.HasValue || discountCode.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền xóa mã giảm giá này.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            _context.DiscountCode.Remove(discountCode);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Mã giảm giá đã được xóa thành công!";
             return RedirectToAction(nameof(Index));

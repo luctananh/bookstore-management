@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Diagnostics;
 
+using bookstoree.Services;
+
 namespace bookstoree.Controllers
 {
     [Authorize]
@@ -20,11 +22,13 @@ namespace bookstoree.Controllers
     {
         private readonly bookstoreeContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly CurrentStoreService _currentStoreService;
 
-        public BooksController(bookstoreeContext context, IWebHostEnvironment webHostEnvironment)
+        public BooksController(bookstoreeContext context, IWebHostEnvironment webHostEnvironment, CurrentStoreService currentStoreService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _currentStoreService = currentStoreService;
         }
 
         // GET: Books
@@ -98,7 +102,13 @@ namespace bookstoree.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            ViewData["CategoryId"] = new SelectList(_context.Category.Where(c => c.StoreId == currentStoreId.Value), "CategoryId", "Name");
             return View();
         }
 
@@ -108,14 +118,23 @@ namespace bookstoree.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile imageFile)
+        public async Task<IActionResult> Create([Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded,StoreId")] Book book, IFormFile imageFile)
         {
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Có lỗi khi tạo sản phẩm";
-                ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
+                var currentStoreIdForInvalidModel = _currentStoreService.GetCurrentStoreId();
+                ViewData["CategoryId"] = new SelectList(_context.Category.Where(c => c.StoreId == currentStoreIdForInvalidModel.Value), "CategoryId", "Name", book.CategoryId);
                 return View(book);
             }
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            book.StoreId = currentStoreId.Value;
 
             if (imageFile != null && imageFile.Length > 0)
             {
@@ -137,9 +156,6 @@ namespace bookstoree.Controllers
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Thêm sách thành công!";
             return RedirectToAction("Index");
-
-            TempData["ErrorMessage"] = "Có lỗi xảy ra khi thêm sách!";
-            return RedirectToAction("Create");
         }
 
 
@@ -157,7 +173,15 @@ namespace bookstoree.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", book.CategoryId);
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            ViewData["CategoryId"] = new SelectList(_context.Category.Where(c => c.StoreId == currentStoreId.Value), "CategoryId", "Name", book.CategoryId);
             return View(book);
         }
 
@@ -167,11 +191,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded")] Book book, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("BookId,ISBN,Title,Description,Author,Publisher,CategoryId,Price,StockQuantity,ImageUrl,DateAdded,StoreId")] Book book, IFormFile? imageFile)
         {
             if (id != book.BookId)
             {
                 return NotFound();
+            }
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue || book.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền chỉnh sửa sách này.";
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             if (ModelState.IsValid)
@@ -276,11 +307,20 @@ namespace bookstoree.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var book = await _context.Book.FindAsync(id);
-            if (book != null)
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+
+            if (book == null)
             {
-                _context.Book.Remove(book);
+                return NotFound();
             }
 
+            if (!currentStoreId.HasValue || book.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền xóa sách này.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            _context.Book.Remove(book);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Sách đã được xóa thành công!";
             return RedirectToAction(nameof(Index));

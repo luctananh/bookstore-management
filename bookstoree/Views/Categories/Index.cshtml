@@ -47,7 +47,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        <td>@Html.DisplayFor(modelItem => item.CategoryName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Name)</td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.CategoryId" class="btn btn-sm btn-info">Sửa</a> |
                                             <a asp-action="Details" asp-route-id="@item.CategoryId" class="btn btn-sm btn-secondary">Chi tiết</a> |

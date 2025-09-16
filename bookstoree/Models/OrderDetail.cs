@@ -14,10 +14,19 @@ namespace bookstoree.Models
         [DisplayName("Sách")]
         public int BookId { get; set; } // Foreign key to Books
         [DisplayName("Số lượng")]
-        public int Quantity { get; set; } // Quantity of the book in the order
+        public int Quantity { get; set; }
+
         [DisplayName("Đơn giá")]
-        public int UnitPrice { get; set; } // Price of the book at the time of order
+        public decimal UnitPrice { get; set; }
+
+        [DisplayName("Mã cửa hàng")]
+        public int? StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public virtual Store? Store { get; set; }
+
+        [ForeignKey("OrderId")]
         public virtual Order? Order { get; set; }
+        [ForeignKey("BookId")]
         public virtual Book? Book { get; set; }
 
     }

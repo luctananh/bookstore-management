@@ -31,6 +31,7 @@ namespace bookstoree.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
                     b.Property<string>("Author")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CategoryId")
@@ -40,9 +41,11 @@ namespace bookstoree.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ISBN")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
@@ -52,17 +55,24 @@ namespace bookstoree.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Publisher")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Book");
                 });
@@ -75,10 +85,16 @@ namespace bookstoree.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
 
-                    b.Property<string>("CategoryName")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Category");
                 });
@@ -90,6 +106,9 @@ namespace bookstoree.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
@@ -103,10 +122,15 @@ namespace bookstoree.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("DiscountCodeId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("DiscountCode");
                 });
@@ -119,7 +143,10 @@ namespace bookstoree.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<string>("DiscountCode")
+                    b.Property<string>("AppliedDiscountCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DiscountCodeId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OrderDate")
@@ -131,6 +158,9 @@ namespace bookstoree.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalAmount")
                         .HasColumnType("int");
 
@@ -139,7 +169,9 @@ namespace bookstoree.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("DiscountCode");
+                    b.HasIndex("DiscountCodeId");
+
+                    b.HasIndex("StoreId");
 
                     b.HasIndex("UserId");
 
@@ -163,8 +195,11 @@ namespace bookstoree.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("UnitPrice")
+                    b.Property<int?>("StoreId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderDetailId");
 
@@ -172,7 +207,37 @@ namespace bookstoree.Migrations
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("StoreId");
+
                     b.ToTable("OrderDetail");
+                });
+
+            modelBuilder.Entity("bookstoree.Models.Store", b =>
+                {
+                    b.Property<int>("StoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoreId"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StoreId");
+
+                    b.ToTable("Store");
                 });
 
             modelBuilder.Entity("bookstoree.Models.User", b =>
@@ -184,25 +249,41 @@ namespace bookstoree.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("StoreId", "Email")
+                        .IsUnique()
+                        .HasFilter("[StoreId] IS NOT NULL");
+
+                    b.HasIndex("StoreId", "UserName")
+                        .IsUnique()
+                        .HasFilter("[StoreId] IS NOT NULL");
 
                     b.ToTable("User");
                 });
@@ -212,17 +293,49 @@ namespace bookstoree.Migrations
                     b.HasOne("bookstoree.Models.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("bookstoree.Models.Store", "Store")
+                        .WithMany("Books")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Category");
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("bookstoree.Models.Category", b =>
+                {
+                    b.HasOne("bookstoree.Models.Store", "Store")
+                        .WithMany("Categories")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("bookstoree.Models.DiscountCode", b =>
+                {
+                    b.HasOne("bookstoree.Models.Store", "Store")
+                        .WithMany("DiscountCodes")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("bookstoree.Models.Order", b =>
                 {
-                    b.HasOne("bookstoree.Models.DiscountCode", "Discount")
+                    b.HasOne("bookstoree.Models.DiscountCode", "DiscountCode")
                         .WithMany("Orders")
-                        .HasForeignKey("DiscountCode");
+                        .HasForeignKey("DiscountCodeId");
+
+                    b.HasOne("bookstoree.Models.Store", "Store")
+                        .WithMany("Orders")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("bookstoree.Models.User", "User")
                         .WithMany("Orders")
@@ -230,7 +343,9 @@ namespace bookstoree.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Discount");
+                    b.Navigation("DiscountCode");
+
+                    b.Navigation("Store");
 
                     b.Navigation("User");
                 });
@@ -240,7 +355,7 @@ namespace bookstoree.Migrations
                     b.HasOne("bookstoree.Models.Book", "Book")
                         .WithMany("OrderDetails")
                         .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("bookstoree.Models.Order", "Order")
@@ -249,9 +364,25 @@ namespace bookstoree.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("bookstoree.Models.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId");
+
                     b.Navigation("Book");
 
                     b.Navigation("Order");
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("bookstoree.Models.User", b =>
+                {
+                    b.HasOne("bookstoree.Models.Store", "Store")
+                        .WithMany("Users")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("bookstoree.Models.Book", b =>
@@ -272,6 +403,19 @@ namespace bookstoree.Migrations
             modelBuilder.Entity("bookstoree.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("bookstoree.Models.Store", b =>
+                {
+                    b.Navigation("Books");
+
+                    b.Navigation("Categories");
+
+                    b.Navigation("DiscountCodes");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("bookstoree.Models.User", b =>

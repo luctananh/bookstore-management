@@ -64,13 +64,13 @@
                                 @Html.DisplayFor(model => model.User.UserName)
                             </dd>
                             <dt class = "col-sm-4">
-                                @Html.DisplayNameFor(model => model.Discount)
+                                @Html.DisplayNameFor(model => model.DiscountCode)
                             </dt>
                             <dd class = "col-sm-8">
-                                @Html.DisplayFor(model => model.Discount.DiscountCodeId)
-                                @if (!string.IsNullOrEmpty(Model.Discount?.Description))
+                                @Html.DisplayFor(model => model.DiscountCode.DiscountCodeId)
+                                @if (!string.IsNullOrEmpty(Model.DiscountCode?.Description))
                                 {
-                                    <span> (@Model.Discount.Description)</span>
+                                    <span> (@Model.DiscountCode.Description)</span>
                                 }
                             </dd>
                         </dl>

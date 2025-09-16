@@ -11,16 +11,20 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using bookstoree.Models.ViewModels;
+using bookstoree.Services;
 
 namespace bookstoree.Controllers
 {
     public class UsersController : Controller
     {
         private readonly bookstoreeContext _context;
+        private readonly CurrentStoreService _currentStoreService;
 
-        public UsersController(bookstoreeContext context)
+        public UsersController(bookstoreeContext context, CurrentStoreService currentStoreService)
         {
             _context = context;
+            _currentStoreService = currentStoreService;
         }
 
         [AllowAnonymous]
@@ -32,21 +36,33 @@ namespace bookstoree.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(int storeId, string username, string password)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.UserName == username);
-
-            if (user == null || user.PasswordHash != password) // In a real app, hash and verify password
+            // First, find the store
+            var store = await _context.Store.FirstOrDefaultAsync(s => s.StoreId == storeId);
+            if (store == null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                ModelState.AddModelError(string.Empty, "Mã cửa hàng không tồn tại.");
                 return View();
             }
 
+            // Then, find the user within that store
+            var user = await _context.User
+                                     .FirstOrDefaultAsync(u => u.UserName == username && u.StoreId == store.StoreId);
+
+            if (user == null || user.PasswordHash != password) // In a real app, hash and verify password
+            {
+                ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
+                return View();
+            }
+
+            // Add StoreId to claims (already done in Register, but ensure it's here too for direct login)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Role, user.Role),
+                new Claim("StoreId", user.StoreId.ToString()) // Ensure StoreId is added
             };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -54,10 +70,8 @@ namespace bookstoree.Controllers
 
             var authProperties = new AuthenticationProperties
             {
-                // AllowRefresh = true,
-                // ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-                // IsPersistent = true,
-                // IssuedUtc = DateTimeOffset.UtcNow,
+                IsPersistent = true, // Keep user logged in across browser sessions
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // Example: 7 days expiration
             };
 
             await HttpContext.SignInAsync(
@@ -80,51 +94,84 @@ namespace bookstoree.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
-            return View();
+            return View(new StoreRegistrationViewModel());
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber")] User user)
+        public async Task<IActionResult> Register(StoreRegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Check if username or email already exists
-                if (await _context.User.AnyAsync(u => u.UserName == user.UserName || u.Email == user.Email))
+                // Check if admin username or email already exists
+                if (await _context.User.AnyAsync(u => u.UserName == model.Username || u.Email == model.Email))
                 {
-                    ModelState.AddModelError(string.Empty, "Username or Email already exists.");
-                    return View(user);
+                    ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc Email Admin đã tồn tại.");
+                    return View(model);
                 }
 
-                user.Role = "Admin"; // Gán vai trò Admin cho người dùng mới
-
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Đăng ký tài khoản thành công!";
-
-                // Automatically sign in the new user
-                var claims = new List<Claim>
+                // Check if store name already exists
+                if (await _context.Store.AnyAsync(s => s.Name == model.StoreName))
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role),
+                    ModelState.AddModelError(string.Empty, "Tên cửa hàng đã tồn tại.");
+                    return View(model);
+                }
+
+                // Create new Store
+                var store = new Store
+                {
+                    Name = model.StoreName,
+                    Address = model.StoreAddress,
+                    PhoneNumber = model.StorePhoneNumber,
+                    ContactEmail = model.StoreContactEmail
                 };
+                _context.Add(store);
+                await _context.SaveChangesAsync(); // Save store to get StoreId
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+                // Create new Admin User for the store
+                var adminUser = new User
+                {
+                    UserName = model.Username,
+                    PasswordHash = model.Password, // In a real app, hash this password!
+                    FullName = model.FullName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    Role = "Admin", // Explicitly set Admin role for the first user of the store
+                    StoreId = store.StoreId // Assign the newly created StoreId
+                };
+                _context.Add(adminUser);
+                await _context.SaveChangesAsync();
 
-                var authProperties = new AuthenticationProperties();
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-                return RedirectToAction("Index", "Home");
-            }
-            return View(user);
-        }
+                                TempData["SuccessMessage"] = "Đăng ký cửa hàng và tài khoản Admin thành công!";
+                                TempData["StoreId"] = store.StoreId; // Pass StoreId to TempData
+                
+                                // Automatically sign in the new admin user
+                                var claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Name, adminUser.UserName),
+                                    new Claim(ClaimTypes.NameIdentifier, adminUser.UserId.ToString()),
+                                    new Claim(ClaimTypes.Role, adminUser.Role),
+                                    new Claim("StoreId", adminUser.StoreId.ToString()) // Add StoreId to claims
+                                };
+                
+                                var claimsIdentity = new ClaimsIdentity(
+                                    claims, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+                
+                                var authProperties = new AuthenticationProperties
+                                {
+                                    IsPersistent = true, // Keep user logged in across browser sessions
+                                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // Example: 7 days expiration
+                                };
+                
+                                await HttpContext.SignInAsync(
+                                    CookieAuthenticationDefaults.AuthenticationScheme,
+                                    new ClaimsPrincipal(claimsIdentity),
+                                    authProperties);
+                
+                                return RedirectToAction("Index", "Home"); // Redirect to home or a dashboard
+                            }
+                            return View(model);        }
 
         // GET: Users/CreateUser (Admin only)
         [Authorize(Roles = "Admin")] // Explicitly state for clarity, though controller-level already applies
@@ -139,14 +186,22 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")] // Explicitly state for clarity
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateUser([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber,Role")] User user)
+        public async Task<IActionResult> CreateUser([Bind("UserName,PasswordHash,FullName,Email,PhoneNumber,Role,StoreId")] User user)
         {
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            user.StoreId = currentStoreId.Value;
+
             if (ModelState.IsValid)
             {
-                // Check if username or email already exists
-                if (await _context.User.AnyAsync(u => u.UserName == user.UserName || u.Email == user.Email))
+                // Check if username or email already exists within the current store
+                if (await _context.User.AnyAsync(u => u.StoreId == currentStoreId.Value && (u.UserName == user.UserName || u.Email == user.Email)))
                 {
-                    ModelState.AddModelError(string.Empty, "Username or Email already exists.");
+                    ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc Email đã tồn tại trong cửa hàng này.");
                     ViewBag.Roles = new List<string> { "Admin", "Staff" };
                     return View(user);
                 }
@@ -154,7 +209,7 @@ namespace bookstoree.Controllers
                 // Ensure the role is valid (Admin, Staff)
                 if (!new List<string> { "Admin", "Staff" }.Contains(user.Role))
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid role specified.");
+                    ModelState.AddModelError(string.Empty, "Vai trò không hợp lệ.");
                     ViewBag.Roles = new List<string> { "Admin", "Staff" };
                     return View(user);
                 }
@@ -245,6 +300,7 @@ namespace bookstoree.Controllers
             }
 
             var user = await _context.User
+                .Include(u => u.Store)
                 .FirstOrDefaultAsync(m => m.UserId == userIdToView); // Fetch by UserId
             if (user == null)
             {
@@ -319,11 +375,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,UserName,PasswordHash,FullName,Email,PhoneNumber,Role")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,UserName,PasswordHash,FullName,Email,PhoneNumber,Role,StoreId")] User user)
         {
             if (id != user.UserId)
             {
                 return NotFound();
+            }
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue || user.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền chỉnh sửa người dùng này.";
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             if (ModelState.IsValid)
@@ -376,11 +439,20 @@ namespace bookstoree.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.User.FindAsync(id);
-            if (user != null)
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+
+            if (user == null)
             {
-                _context.User.Remove(user);
+                return NotFound();
             }
 
+            if (!currentStoreId.HasValue || user.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền xóa người dùng này.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            _context.User.Remove(user);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Người dùng đã được xóa thành công!";
             return RedirectToAction(nameof(Index));

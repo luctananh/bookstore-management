@@ -28,6 +28,8 @@ namespace bookstoree.Models
         [DisplayName("Danh mục")]
         [Required(ErrorMessage = "Vui lòng chọn danh mục")]
         public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public virtual Category? Category { get; set; }
 
         [DisplayName("Giá (VNĐ)")]
         [Required(ErrorMessage = "Vui lòng nhập giá")]
@@ -42,15 +44,18 @@ namespace bookstoree.Models
         [DisplayName("Đường dẫn hình ảnh")]
         public string? ImageUrl { get; set; }
 
+        [DisplayName("Ngày thêm")]
+        public DateTime DateAdded { get; set; }
+
         [DisplayName("Mô tả")]
         [Required(ErrorMessage = "Vui lòng nhập mô tả")]
         public string? Description { get; set; }
 
-        [DisplayName("Ngày thêm")]
-        public DateTime DateAdded { get; set; } = DateTime.Now;
+        [DisplayName("Mã cửa hàng")]
+        public int? StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public virtual Store? Store { get; set; }
 
-        // Navigation
-        public virtual Category? Category { get; set; }
-        public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }
 }

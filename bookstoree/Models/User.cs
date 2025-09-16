@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace bookstoree.Models
 {
@@ -27,6 +28,12 @@ namespace bookstoree.Models
         public string? PhoneNumber { get; set; }
         [DisplayName("Vai trò")]
         public string Role { get; set; } = "Admin"; // "Admin", "Staff"
+
+        [DisplayName("Mã cửa hàng")]
+        public int? StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public virtual Store? Store { get; set; }
+
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     }

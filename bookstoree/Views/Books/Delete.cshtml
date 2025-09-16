@@ -80,9 +80,9 @@
                             <dt class = "col-sm-2">
                                 @Html.DisplayName("Category")
                             </dt>
-                            <dd class = "col-sm-10">
-                                @(Model.Category != null ? Model.Category.CategoryName : "N/A")
-                            </dd>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
                         </dl>
                     </div>
                     <div class="card-footer">

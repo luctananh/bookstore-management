@@ -10,15 +10,19 @@ using bookstoree.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims; // Added for FindFirstValue
 
+using bookstoree.Services;
+
 namespace bookstoree.Controllers
 {
     public class OrderDetailsController : Controller
     {
         private readonly bookstoreeContext _context;
+        private readonly CurrentStoreService _currentStoreService;
 
-        public OrderDetailsController(bookstoreeContext context)
+        public OrderDetailsController(bookstoreeContext context, CurrentStoreService currentStoreService)
         {
             _context = context;
+            _currentStoreService = currentStoreService;
         }
 
         // GET: OrderDetails
@@ -107,15 +111,22 @@ namespace bookstoree.Controllers
         [Authorize(Roles = "Admin,Staff")] // Allow Admin and Staff to create
         public IActionResult Create()
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "BookId", "Title"); // Changed to Title for better display
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            ViewData["BookId"] = new SelectList(_context.Book.Where(b => b.StoreId == currentStoreId.Value), "BookId", "Title"); // Changed to Title for better display
 
             if (User.IsInRole("Staff"))
             {
                 var currentUserId = GetCurrentUserId();
                 if (currentUserId.HasValue)
                 {
-                    // Staff can only create order details for their own orders
-                    ViewData["OrderId"] = new SelectList(_context.Order.Where(o => o.UserId == currentUserId.Value), "OrderId", "OrderId");
+                    // Staff can only create order details for their own orders within their store
+                    ViewData["OrderId"] = new SelectList(_context.Order.Where(o => o.UserId == currentUserId.Value && o.StoreId == currentStoreId.Value), "OrderId", "OrderId");
                 }
                 else
                 {
@@ -124,7 +135,8 @@ namespace bookstoree.Controllers
             }
             else // Admin or other roles
             {
-                ViewData["OrderId"] = new SelectList(_context.Order, "OrderId", "OrderId");
+                // Admin can create order details for any order within their store
+                ViewData["OrderId"] = new SelectList(_context.Order.Where(o => o.StoreId == currentStoreId.Value), "OrderId", "OrderId");
             }
             
             return View();
@@ -136,8 +148,16 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Staff")] // Allow Admin and Staff to create
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderDetailId,OrderId,BookId,Quantity,UnitPrice")] OrderDetail orderDetail)
+        public async Task<IActionResult> Create([Bind("OrderDetailId,OrderId,BookId,Quantity,UnitPrice,StoreId")] OrderDetail orderDetail)
         {
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy ID cửa hàng hiện tại.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            orderDetail.StoreId = currentStoreId.Value;
+
             // Ownership check for Staff on the parent order
             if (User.IsInRole("Staff"))
             {
@@ -146,13 +166,13 @@ namespace bookstoree.Controllers
                 {
                     return RedirectToAction("AccessDenied", "Home");
                 }
-                var parentOrder = await _context.Order.AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == orderDetail.OrderId);
+                var parentOrder = await _context.Order.AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == orderDetail.OrderId && o.StoreId == currentStoreId.Value);
                 if (parentOrder == null || parentOrder.UserId != currentUserId.Value)
                 {
                     return RedirectToAction("AccessDenied", "Home");
                 }
             }
-            // Admin users can create for any order
+            // Admin users can create for any order within their store
 
             if (ModelState.IsValid)
             {
@@ -161,8 +181,8 @@ namespace bookstoree.Controllers
                 TempData["SuccessMessage"] = "Chi tiết đơn hàng đã được thêm thành công!";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "BookId", "Title", orderDetail.BookId); // Changed to Title
-            ViewData["OrderId"] = new SelectList(_context.Order, "OrderId", "OrderId", orderDetail.OrderId);
+            ViewData["BookId"] = new SelectList(_context.Book.Where(b => b.StoreId == currentStoreId.Value), "BookId", "Title", orderDetail.BookId); // Changed to Title
+            ViewData["OrderId"] = new SelectList(_context.Order.Where(o => o.StoreId == currentStoreId.Value), "OrderId", "OrderId", orderDetail.OrderId);
             return View(orderDetail);
         }
 
@@ -181,6 +201,13 @@ namespace bookstoree.Controllers
                 return NotFound();
             }
 
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue || orderDetail.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền chỉnh sửa chi tiết đơn hàng này.";
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
             // Ownership check for Staff
             if (User.IsInRole("Staff"))
             {
@@ -192,8 +219,8 @@ namespace bookstoree.Controllers
             }
             // Admin users can edit any order detail
 
-            ViewData["BookId"] = new SelectList(_context.Book, "BookId", "Title", orderDetail.BookId); // Changed to Title
-            ViewData["OrderId"] = new SelectList(_context.Order, "OrderId", "OrderId", orderDetail.OrderId);
+            ViewData["BookId"] = new SelectList(_context.Book.Where(b => b.StoreId == currentStoreId.Value), "BookId", "Title", orderDetail.BookId); // Changed to Title
+            ViewData["OrderId"] = new SelectList(_context.Order.Where(o => o.StoreId == currentStoreId.Value), "OrderId", "OrderId", orderDetail.OrderId);
             return View(orderDetail);
         }
 
@@ -203,11 +230,18 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize] // Allow any authenticated user
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderDetailId,OrderId,BookId,Quantity,UnitPrice")] OrderDetail orderDetail)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderDetailId,OrderId,BookId,Quantity,UnitPrice,StoreId")] OrderDetail orderDetail)
         {
             if (id != orderDetail.OrderDetailId)
             {
                 return NotFound();
+            }
+
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+            if (!currentStoreId.HasValue || orderDetail.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền chỉnh sửa chi tiết đơn hàng này.";
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             // Ownership check for Staff on the parent order
@@ -218,7 +252,7 @@ namespace bookstoree.Controllers
                 {
                     return RedirectToAction("AccessDenied", "Home");
                 }
-                var parentOrder = await _context.Order.AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == orderDetail.OrderId);
+                var parentOrder = await _context.Order.AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == orderDetail.OrderId && o.StoreId == currentStoreId.Value);
                 if (parentOrder == null || parentOrder.UserId != currentUserId.Value)
                 {
                     return RedirectToAction("AccessDenied", "Home");
@@ -247,8 +281,8 @@ namespace bookstoree.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "BookId", "Title", orderDetail.BookId); // Changed to Title
-            ViewData["OrderId"] = new SelectList(_context.Order, "OrderId", "OrderId", orderDetail.OrderId);
+            ViewData["BookId"] = new SelectList(_context.Book.Where(b => b.StoreId == currentStoreId.Value), "BookId", "Title", orderDetail.BookId); // Changed to Title
+            ViewData["OrderId"] = new SelectList(_context.Order.Where(o => o.StoreId == currentStoreId.Value), "OrderId", "OrderId", orderDetail.OrderId);
             return View(orderDetail);
         }
 
@@ -291,9 +325,17 @@ namespace bookstoree.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var orderDetail = await _context.OrderDetail.Include(od => od.Order).FirstOrDefaultAsync(od => od.OrderDetailId == id);
+            var currentStoreId = _currentStoreService.GetCurrentStoreId();
+
             if (orderDetail == null)
             {
                 return NotFound(); // Order detail not found
+            }
+
+            if (!currentStoreId.HasValue || orderDetail.StoreId != currentStoreId.Value)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền xóa chi tiết đơn hàng này.";
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             // Ownership check for Staff

@@ -18,13 +18,20 @@ namespace bookstoree.Models
         public string? Status { get; set; } // e.g., Pending, Shipped, Delivered, Cancelled
         [DisplayName("Phương thức thanh toán")]
         public string? PaymentMethod { get; set; } // e.g., Credit Card, PayPal, etc.
-        [ForeignKey("Discount")]
-        [DisplayName("Mã giảm giá")]
-        public string? DiscountCode { get; set; } // Optional discount code
+        public string? AppliedDiscountCode { get; set; } // Optional discount code string
         [DisplayName("Tổng tiền (VNĐ)")]
         public int TotalAmount { get; set; } // Total amount after applying discounts and taxes
+        public string? DiscountCodeId { get; set; }
+
+        [DisplayName("Mã cửa hàng")]
+        public int? StoreId { get; set; }
+        [ForeignKey("StoreId")]
+        public virtual Store? Store { get; set; }
+
+        [ForeignKey("UserId")]
         public virtual User? User { get; set; }
-        public virtual DiscountCode? Discount { get; set; }
+        [ForeignKey("DiscountCodeId")]
+        public virtual DiscountCode? DiscountCode { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     }

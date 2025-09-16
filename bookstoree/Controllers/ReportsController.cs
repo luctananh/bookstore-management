@@ -5,16 +5,20 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using bookstoree.Data;
 
+using bookstoree.Services;
+
 namespace bookstoree.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ReportsController : Controller
     {
         private readonly bookstoreeContext _context;
+        private readonly CurrentStoreService _currentStoreService;
 
-        public ReportsController(bookstoreeContext context)
+        public ReportsController(bookstoreeContext context, CurrentStoreService currentStoreService)
         {
             _context = context;
+            _currentStoreService = currentStoreService;
         }
 
         public async Task<IActionResult> Index()
@@ -37,7 +41,7 @@ namespace bookstoree.Controllers
             var salesByCategory = await _context.OrderDetail
                 .Include(od => od.Book)
                 .ThenInclude(b => b.Category)
-                .GroupBy(od => od.Book.Category.CategoryName)
+                .GroupBy(od => od.Book.Category.Name)
                 .Select(g => new
                 {
                     CategoryName = g.Key,

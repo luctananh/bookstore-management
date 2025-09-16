@@ -1,7 +1,7 @@
-@model bookstoree.Models.User
+@model bookstoree.Models.ViewModels.StoreRegistrationViewModel
 
 @{
-    ViewData["Title"] = "Đăng ký";
+    ViewData["Title"] = "Đăng ký cửa hàng";
     Layout = null;
 }
 
@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Trang đăng ký</title>
+    <title>AdminLTE 3 | Đăng ký cửa hàng</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -29,12 +29,62 @@
 
         <div class="card">
             <div class="card-body register-card-body">
-                <p class="login-box-msg">Đăng ký thành viên mới</p>
+                <p class="login-box-msg">Đăng ký cửa hàng và tài khoản Admin</p>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["SuccessMessage"]
+                        @if (TempData["StoreId"] != null)
+                        {
+                            <p>Mã cửa hàng của bạn là: <strong>@TempData["StoreId"]</strong>. Vui lòng ghi nhớ mã này để đăng nhập.</p>
+                        }
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
 
                 <form asp-action="Register" method="post">
                     <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <h4>Thông tin cửa hàng</h4>
                     <div class="input-group mb-3">
-                        <input asp-for="UserName" type="text" class="form-control" placeholder="Tên đăng nhập">
+                        <input asp-for="StoreName" type="text" class="form-control" placeholder="Tên cửa hàng">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-store"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="StoreAddress" type="text" class="form-control" placeholder="Địa chỉ cửa hàng">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-map-marker-alt"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="StorePhoneNumber" type="text" class="form-control" placeholder="Số điện thoại cửa hàng">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-phone"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="StoreContactEmail" type="email" class="form-control" placeholder="Email liên hệ cửa hàng">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Thông tin tài khoản Admin</h4>
+                    <div class="input-group mb-3">
+                        <input asp-for="Username" type="text" class="form-control" placeholder="Tên đăng nhập Admin">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-user"></span>
@@ -42,7 +92,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input asp-for="Email" type="email" class="form-control" placeholder="Email">
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Email Admin">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -50,7 +100,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input asp-for="PasswordHash" type="password" class="form-control" placeholder="Mật khẩu">
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu Admin">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -58,7 +108,15 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input asp-for="FullName" type="text" class="form-control" placeholder="Họ và tên">
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Xác nhận mật khẩu Admin">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="FullName" type="text" class="form-control" placeholder="Họ và tên Admin">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-address-card"></span>
@@ -66,13 +124,14 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input asp-for="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại">
+                        <input asp-for="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại Admin">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-phone"></span>
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">

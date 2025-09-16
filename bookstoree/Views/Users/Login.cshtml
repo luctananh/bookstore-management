@@ -32,6 +32,14 @@
                 <form asp-action="Login" method="post">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="input-group mb-3">
+                        <input type="text" name="storeId" class="form-control" placeholder="Mã cửa hàng">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-store"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
                         <input type="text" name="username" class="form-control" placeholder="Tên đăng nhập">
                         <div class="input-group-append">
                             <div class="input-group-text">
