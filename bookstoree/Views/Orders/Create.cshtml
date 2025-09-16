@@ -59,7 +59,9 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="Order.DiscountCode" class="control-label"></label>
-                                <select asp-for="Order.DiscountCode" class="form-control" asp-items="ViewBag.DiscountCode"></select>
+                                <select asp-for="Order.DiscountCode" class="form-control" asp-items="ViewBag.DiscountCode">
+                                    <option value="">None</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Order.TotalAmount" class="control-label"></label>
@@ -73,10 +75,11 @@
                                 @* Initial OrderDetail item will be rendered here *@
                             </div>
                             <button type="button" id="addOrderItem" class="btn btn-success">Thêm sách</button>
+                            <span asp-validation-for="OrderDetails" class="text-danger"></span>
                         </div>
                         <div class="card-footer">
                             <input type="submit" value="Tạo mới" class="btn btn-primary" />
-                            <button type="button" onclick="history.back()" class="btn btn-secondary">Quay lại</button>
+                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
                         </div>
                     </form>
                 </div>
@@ -97,6 +100,14 @@
             var bookPrices = @Html.Raw(ViewData["BookPrices"]);
             var discountDetails = @Html.Raw(ViewData["DiscountDetails"]);
             var booksData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewData["BookListForJs"]));
+
+            function checkOrderDetails() {
+                if ($('.order-detail-item').length > 0) {
+                    $('span[data-valmsg-for="OrderDetails"]').hide();
+                } else {
+                    $('span[data-valmsg-for="OrderDetails"]').show();
+                }
+            }
 
             function calculateTotal() {
                 var subtotal = 0;
@@ -157,11 +168,13 @@
                 });
                 orderDetailIndex++;
                 calculateTotal();
+                checkOrderDetails();
             });
 
             $(document).on('click', '.remove-order-item', function () {
                 $(this).closest('.order-detail-item').remove();
                 calculateTotal();
+                checkOrderDetails();
             });
 
             $(document).on('change', '.order-detail-item select, .order-detail-item input, #Order_DiscountCode', function () {
@@ -169,6 +182,7 @@
             });
 
             calculateTotal();
+            checkOrderDetails();
         });
     </script>
 }

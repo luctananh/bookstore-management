@@ -39,6 +39,13 @@
             min-height: calc(100vh - 57px - 57px); /* Adjust based on your header/footer height */
         }
     </style>
+    <style>
+        .text-danger:not(:empty)::before {
+            content: "(!) ";
+            font-weight: bold;
+            color: red;
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">

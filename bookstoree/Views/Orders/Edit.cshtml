@@ -75,10 +75,11 @@
                                 @* Existing OrderDetail items will be rendered here by JavaScript *@
                             </div>
                             <button type="button" id="addOrderItem" class="btn btn-success">Thêm sách</button>
+                            <span asp-validation-for="OrderDetails" class="text-danger"></span>
                         </div>
                         <div class="card-footer">
                             <input type="submit" value="Lưu" class="btn btn-primary" />
-                            <button type="button" onclick="history.back()" class="btn btn-secondary">Quay lại</button>
+                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
                         </div>
                     </form>
                 </div>
@@ -101,6 +102,14 @@
             var booksDataRaw = '@Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewData["BookListForJs"] ?? new List<object>()))';
             var booksData = JSON.parse(booksDataRaw);
             console.log("booksData:", booksData);
+
+            function checkOrderDetails() {
+                if ($('.order-detail-item').length > 0) {
+                    $('span[data-valmsg-for="OrderDetails"]').hide();
+                } else {
+                    $('span[data-valmsg-for="OrderDetails"]').show();
+                }
+            }
 
             function calculateTotal() {
                 var subtotal = 0;
@@ -173,23 +182,24 @@
                 $.each(existingOrderDetails, function(idx, detail) {
                     addOrderItemRow(detail);
                 });
-            } else {
-                addOrderItemRow(null); // Add one empty row for new order
             }
 
             $('#addOrderItem').click(function () {
                 addOrderItemRow(null);
                 calculateTotal();
+                checkOrderDetails();
             });
 
             $(document).on('click', '.remove-order-item', function () {
                 $(this).closest('.order-detail-item').remove();
                 calculateTotal();
+                checkOrderDetails();
             });
 
             $(document).on('change', '.order-detail-item select, .order-detail-item input, #DiscountCode', function () {
                 calculateTotal();
             });
+            checkOrderDetails();
         });
     </script>
 }

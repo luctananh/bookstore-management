@@ -12,6 +12,7 @@ namespace bookstoree.Models
         [DisplayName("Mã khách hàng")]
         public int UserId { get; set; }
         [DisplayName("Ngày đặt")]
+        [Required(ErrorMessage = "Ngày đặt hàng là bắt buộc.")]
         public DateTime OrderDate { get; set; }
         [DisplayName("Trạng thái")]
         public string? Status { get; set; } // e.g., Pending, Shipped, Delivered, Cancelled

@@ -7,6 +7,7 @@ namespace bookstoree.Models
     {
         [Key]
         [DisplayName("Mã giảm giá")]
+        [Required(ErrorMessage = "Mã giảm giá là bắt buộc.")]
         public string DiscountCodeId { get; set; } // Unique identifier for the discount code
         [DisplayName("Mô tả")]
         public string? Description { get; set; } // Description of the discount code
