@@ -160,25 +160,15 @@ namespace bookstoree.Controllers
             var currentStoreId = _currentStoreService.GetCurrentStoreId();
             if (!currentStoreId.HasValue)
             {
-                ModelState.AddModelError(string.Empty, "Không tìm thấy ID cửa hàng hiện tại. Vui lòng đăng nhập lại.");
-                // Re-populate ViewData and return view
-                var discountsForInvalidModel = _context.DiscountCode.Where(d => d.StoreId == currentStoreId.Value).ToList();
-                var discountListForInvalidModel = discountsForInvalidModel.Select(d => new { d.DiscountCodeId, d.Description }).ToList();
-                discountListForInvalidModel.Insert(0, new { DiscountCodeId = "", Description = "None" });
-                ViewData["DiscountCode"] = new SelectList(discountListForInvalidModel, "DiscountCodeId", "Description", viewModel.Order.DiscountCode);
-
-                ViewData["DiscountDetails"] = System.Text.Json.JsonSerializer.Serialize(
-                    discountsForInvalidModel.ToDictionary(d => d.DiscountCodeId, d => new { d.DiscountType, d.Value, d.MinimumOrder }));
-
-                var booksForInvalidModel = _context.Book.Where(b => b.StoreId == currentStoreId.Value).Select(b => new { b.BookId, b.Title, b.Price }).ToList();
-                ViewData["BookListForJs"] = booksForInvalidModel;
-                ViewData["Books"] = new SelectList(booksForInvalidModel, "BookId", "Title");
-                ViewData["BookPrices"] = System.Text.Json.JsonSerializer.Serialize(booksForInvalidModel.ToDictionary(b => b.BookId, b => b.Price));
-                return View(viewModel);
+                return RedirectToAction("AccessDenied", "Home");
             }
 
             if (ModelState.IsValid)
             {
+                if (!string.IsNullOrEmpty(viewModel.Order.DiscountCodeId))
+                {
+                    viewModel.Order.AppliedDiscountCode = viewModel.Order.DiscountCodeId;
+                }
                 // Validate that there is at least one order detail
                 if (viewModel.OrderDetails == null || !viewModel.OrderDetails.Any(od => od.BookId > 0 && od.Quantity > 0))
                 {
@@ -187,7 +177,7 @@ namespace bookstoree.Controllers
                     var discounts = _context.DiscountCode.Where(d => d.StoreId == currentStoreId.Value).ToList();
                     var discountList = discounts.Select(d => new { d.DiscountCodeId, d.Description }).ToList();
                     discountList.Insert(0, new { DiscountCodeId = "", Description = "None" });
-                    ViewData["DiscountCode"] = new SelectList(discountList, "DiscountCodeId", "Description", viewModel.Order.DiscountCode);
+                    ViewData["DiscountCode"] = new SelectList(discountList, "DiscountCodeId", "Description", viewModel.Order.DiscountCodeId);
 
                     ViewData["DiscountDetails"] = System.Text.Json.JsonSerializer.Serialize(
                         discounts.ToDictionary(d => d.DiscountCodeId, d => new { d.DiscountType, d.Value, d.MinimumOrder }));
@@ -271,11 +261,26 @@ namespace bookstoree.Controllers
 
 
 
+                // Calculate TotalAmount
+                decimal subtotal = viewModel.Order.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
+                decimal total = subtotal;
+
+                if (!string.IsNullOrEmpty(viewModel.Order.AppliedDiscountCode))
+                {
+                    var discount = await _context.DiscountCode.FindAsync(viewModel.Order.AppliedDiscountCode);
+                    if (discount != null && subtotal >= discount.MinimumOrder)
+                    {
+                        if (discount.DiscountType == "Percent")
+                            total = subtotal * (1 - (decimal)discount.Value / 100);
+                        else
+                            total = subtotal - (decimal)discount.Value;
+                    }
+                }
+                viewModel.Order.TotalAmount = (int)Math.Max(0, total);
+
                 viewModel.Order.StoreId = currentStoreId.Value; // Assign StoreId to the order
                 _context.Add(viewModel.Order);
                 await _context.SaveChangesAsync(); // Save order to get OrderId
-
-                await _context.SaveChangesAsync(); // Save order details
                 TempData["SuccessMessage"] = "Đơn hàng đã được tạo thành công!";
                 return RedirectToAction(nameof(Index));
             }
@@ -323,7 +328,9 @@ namespace bookstoree.Controllers
                     return RedirectToAction("AccessDenied", "Home");
                 }
             }
-            ViewData["DiscountCode"] = new SelectList(_context.DiscountCode.Where(d => d.StoreId == currentStoreId.Value), "DiscountCodeId", "DiscountCodeId", order.DiscountCode);
+            // ViewData["DiscountCode"] = new SelectList(_context.DiscountCode.Where(d => d.StoreId == currentStoreId.Value), "DiscountCodeId", "DiscountCodeId", order.DiscountCode);
+            ViewData["DiscountCode"] = new SelectList(_context.DiscountCode.Where(d => d.StoreId == currentStoreId.Value),"DiscountCodeId", "Description", order.AppliedDiscountCode);
+
             ViewData["UserId"] = new SelectList(_context.User.Where(u => u.StoreId == currentStoreId.Value), "UserId", "UserId", order.UserId);
 
             var books = _context.Book.Where(b => b.StoreId == currentStoreId.Value).Select(b => new { b.BookId, b.Title, b.Price }).ToList();
@@ -353,7 +360,7 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize] // Allow any authenticated user
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,UserId,OrderDate,Status,PaymentMethod,AppliedDiscountCode,TotalAmount,DiscountCodeId,StoreId")] Order order, List<OrderDetail> OrderDetails)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,UserId,OrderDate,Status,PaymentMethod,AppliedDiscountCode,DiscountCodeId,StoreId")] Order order, List<OrderDetail> OrderDetails)
         {
             if (id != order.OrderId)
             {
@@ -432,7 +439,6 @@ namespace bookstoree.Controllers
                 orderToUpdate.OrderDate = order.OrderDate;
                 orderToUpdate.Status = order.Status;
                 orderToUpdate.PaymentMethod = order.PaymentMethod;
-                orderToUpdate.AppliedDiscountCode = order.DiscountCodeId;
 
                 var detailsFromForm = OrderDetails
                     .Where(od => od.BookId > 0 && od.Quantity > 0)
@@ -491,25 +497,24 @@ namespace bookstoree.Controllers
                 decimal subtotal = orderToUpdate.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
                 decimal total = subtotal;
 
-                if (!string.IsNullOrEmpty(orderToUpdate.AppliedDiscountCode))
+                if (!string.IsNullOrEmpty(orderToUpdate.DiscountCodeId))
                 {
-                    var discount = await _context.DiscountCode.FindAsync(orderToUpdate.AppliedDiscountCode);
+                    var discount = await _context.DiscountCode.FindAsync(orderToUpdate.DiscountCodeId);
                     if (discount != null && subtotal >= discount.MinimumOrder)
                     {
                         if (discount.DiscountType == "Percent")
-                        {
                             total = subtotal * (1 - (decimal)discount.Value / 100);
-                        }
                         else
-                        {
                             total = subtotal - (decimal)discount.Value;
-                        }
                     }
                 }
+
                 orderToUpdate.TotalAmount = (int)Math.Max(0, total);
 
                 try
                 {
+                    orderToUpdate.DiscountCodeId = order.DiscountCodeId;
+                    orderToUpdate.AppliedDiscountCode = order.AppliedDiscountCode;
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Đơn hàng đã được cập nhật thành công!";
                 }
@@ -562,6 +567,7 @@ namespace bookstoree.Controllers
 
             return View(orderToUpdate);
         }        // GET: Orders/Delete/5
+
         [Authorize] // Allow any authenticated user
         public async Task<IActionResult> Delete(int? id)
         {
