@@ -233,22 +233,45 @@ namespace bookstoree.Controllers
                         var book = await _context.Book.FindAsync(item.BookId);
                         if (book != null)
                         {
-                            // Deduct stock quantity
+                            // Kiểm tra tồn kho
+                            if (item.Quantity > book.StockQuantity)
+                            {
+                                ModelState.AddModelError("", $"Sách '{book.Title}' chỉ còn {book.StockQuantity} cuốn trong kho. Vui lòng nhập số lượng hợp lệ.");
+                                
+                                // Load lại dữ liệu cho View
+                                var discounts = _context.DiscountCode.Where(d => d.StoreId == currentStoreId.Value).ToList();
+                                var discountList = discounts.Select(d => new { d.DiscountCodeId, d.Description }).ToList();
+                                discountList.Insert(0, new { DiscountCodeId = "", Description = "None" });
+                                ViewData["DiscountCode"] = new SelectList(discountList, "DiscountCodeId", "Description", viewModel.Order.DiscountCode);
+                                ViewData["DiscountDetails"] = System.Text.Json.JsonSerializer.Serialize(
+                                    discounts.ToDictionary(d => d.DiscountCodeId, d => new { d.DiscountType, d.Value, d.MinimumOrder }));
+
+                                var books = _context.Book.Where(b => b.StoreId == currentStoreId.Value).Select(b => new { b.BookId, b.Title, b.Price }).ToList();
+                                ViewData["BookListForJs"] = books;
+                                ViewData["Books"] = new SelectList(books, "BookId", "Title");
+                                ViewData["BookPrices"] = System.Text.Json.JsonSerializer.Serialize(books.ToDictionary(b => b.BookId, b => b.Price));
+
+                                return View(viewModel); // Trả lại form với lỗi
+                            }
+
+                            // Trừ số lượng
                             book.StockQuantity -= item.Quantity;
-                            _context.Update(book); // Mark book as modified
+
+                            _context.Update(book);
 
                             var orderDetail = new OrderDetail
                             {
                                 OrderId = viewModel.Order.OrderId,
                                 BookId = item.BookId,
                                 Quantity = item.Quantity,
-                                UnitPrice = book.Price, // Use current book price
-                                StoreId = currentStoreId.Value // Assign StoreId to order detail
+                                UnitPrice = book.Price,
+                                StoreId = currentStoreId.Value
                             };
                             _context.Add(orderDetail);
                         }
                     }
                 }
+
                 await _context.SaveChangesAsync(); // Save order details
                 TempData["SuccessMessage"] = "Đơn hàng đã được tạo thành công!";
                 return RedirectToAction(nameof(Index));
