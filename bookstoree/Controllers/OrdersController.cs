@@ -192,7 +192,7 @@ namespace bookstoree.Controllers
                 // Set OrderDate if not provided by the form (e.g., if hidden)
                 if (viewModel.Order.OrderDate == default(DateTime))
                 {
-                    viewModel.Order.OrderDate = DateTime.Now;
+                    viewModel.Order.OrderDate = DateTime.UtcNow;
                 }
 
                 // Always set UserId to the logged-in user's ID
@@ -436,7 +436,7 @@ namespace bookstoree.Controllers
                     order.UserId = currentUserId.Value; // Keep the original user ID
                 }
 
-                orderToUpdate.OrderDate = order.OrderDate;
+                orderToUpdate.OrderDate = order.OrderDate.ToUniversalTime();
                 orderToUpdate.Status = order.Status;
                 orderToUpdate.PaymentMethod = order.PaymentMethod;
 

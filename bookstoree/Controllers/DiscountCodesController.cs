@@ -105,6 +105,9 @@ namespace bookstoree.Controllers
                 }
                 discountCode.StoreId = currentStoreId.Value;
 
+                discountCode.StartDate = discountCode.StartDate.ToUniversalTime();
+                discountCode.EndDate = discountCode.EndDate.ToUniversalTime();
+
                 _context.Add(discountCode);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Mã giảm giá đã được thêm thành công!";
@@ -154,6 +157,8 @@ namespace bookstoree.Controllers
             {
                 try
                 {
+                    discountCode.StartDate = discountCode.StartDate.ToUniversalTime();
+                    discountCode.EndDate = discountCode.EndDate.ToUniversalTime();
                     _context.Update(discountCode);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Mã giảm giá đã được cập nhật thành công!";
