@@ -432,7 +432,7 @@ namespace bookstoree.Controllers
                 orderToUpdate.OrderDate = order.OrderDate;
                 orderToUpdate.Status = order.Status;
                 orderToUpdate.PaymentMethod = order.PaymentMethod;
-                orderToUpdate.AppliedDiscountCode = order.AppliedDiscountCode; // Use AppliedDiscountCode
+                orderToUpdate.AppliedDiscountCode = order.DiscountCodeId;
 
                 var detailsFromForm = OrderDetails
                     .Where(od => od.BookId > 0 && od.Quantity > 0)
@@ -450,35 +450,43 @@ namespace bookstoree.Controllers
                     var existingDetail = orderToUpdate.OrderDetails
                         .FirstOrDefault(d => d.OrderDetailId == detailFromForm.OrderDetailId);
 
+                    var book = await _context.Book.FindAsync(detailFromForm.BookId);
+                    if (book == null)
+                    {
+                        ModelState.AddModelError("OrderDetails", $"Không tìm thấy sách với ID {detailFromForm.BookId}.");
+                        return View(orderToUpdate);
+                    }
+
+                    // ✅ Kiểm tra tồn kho
+                    if (detailFromForm.Quantity > book.StockQuantity)
+                    {
+                        ModelState.AddModelError("OrderDetails",
+                            $"Sách '{book.Title}' chỉ còn {book.StockQuantity} cuốn trong kho. Vui lòng nhập số lượng hợp lệ.");
+                        return View(orderToUpdate);
+                    }
+
                     if (existingDetail != null)
                     {
                         // Update existing
-                        var book = await _context.Book.FindAsync(detailFromForm.BookId);
-                        if (book != null)
-                        {
-                            existingDetail.BookId = detailFromForm.BookId;
-                            existingDetail.Quantity = detailFromForm.Quantity;
-                            existingDetail.UnitPrice = book.Price;
-                            existingDetail.StoreId = currentStoreId.Value; // Assign StoreId to order detail
-                        }
+                        existingDetail.BookId = detailFromForm.BookId;
+                        existingDetail.Quantity = detailFromForm.Quantity;
+                        existingDetail.UnitPrice = book.Price;
+                        existingDetail.StoreId = currentStoreId.Value; // Assign StoreId
                     }
                     else
                     {
                         // Add new
-                        var book = await _context.Book.FindAsync(detailFromForm.BookId);
-                        if (book != null)
+                        orderToUpdate.OrderDetails.Add(new OrderDetail
                         {
-                            orderToUpdate.OrderDetails.Add(new OrderDetail
-                            {
-                                OrderId = orderToUpdate.OrderId,
-                                BookId = detailFromForm.BookId,
-                                Quantity = detailFromForm.Quantity,
-                                UnitPrice = book.Price,
-                                StoreId = currentStoreId.Value // Assign StoreId to order detail
-                            });
-                        }
+                            OrderId = orderToUpdate.OrderId,
+                            BookId = detailFromForm.BookId,
+                            Quantity = detailFromForm.Quantity,
+                            UnitPrice = book.Price,
+                            StoreId = currentStoreId.Value // Assign StoreId
+                        });
                     }
                 }
+
 
                 decimal subtotal = orderToUpdate.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
                 decimal total = subtotal;
