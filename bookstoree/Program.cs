@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims; // Added for ClaimTypes
 using System.Text.Json.Serialization; // Added for ReferenceHandler.Preserve
 using bookstoree.Services;
+using Npgsql.EntityFrameworkCore.PostgreSQL; // Added for PostgreSQL
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<bookstoreeContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("bookstoreeContext") ?? throw new InvalidOperationException("Connection string 'bookstoreeContext' not found.")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnection") ?? throw new InvalidOperationException("Connection string 'SupabaseConnection' not found.")));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CurrentStoreService>();
@@ -29,6 +31,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // Add services to the container.
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "bookstoree_"; // Optional: prefix for keys in Redis
+});
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
+
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
@@ -49,6 +64,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession(); // Add this after UseRouting and before UseAuthentication/UseAuthorization
 
 app.UseAuthentication(); // Add this before UseAuthorization
 app.UseAuthorization();
