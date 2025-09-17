@@ -194,6 +194,10 @@ namespace bookstoree.Controllers
                 {
                     viewModel.Order.OrderDate = DateTime.UtcNow;
                 }
+                else
+                {
+                    viewModel.Order.OrderDate = DateTime.SpecifyKind(viewModel.Order.OrderDate, DateTimeKind.Utc);
+                }
 
                 // Always set UserId to the logged-in user's ID
                 var currentUserId = GetCurrentUserId();
