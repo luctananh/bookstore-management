@@ -220,11 +220,6 @@ namespace bookstoree.Controllers
                     return View(viewModel);
                 }
 
-                viewModel.Order.StoreId = currentStoreId.Value; // Assign StoreId to the order
-
-                _context.Add(viewModel.Order);
-                await _context.SaveChangesAsync(); // Save order to get OrderId
-
                 // Add OrderDetails
                 foreach (var item in viewModel.OrderDetails)
                 {
@@ -259,18 +254,26 @@ namespace bookstoree.Controllers
 
                             _context.Update(book);
 
-                            var orderDetail = new OrderDetail
+                            if (viewModel.Order.OrderDetails == null)
                             {
-                                OrderId = viewModel.Order.OrderId,
+                                viewModel.Order.OrderDetails = new List<OrderDetail>();
+                            }
+                            viewModel.Order.OrderDetails.Add(new OrderDetail
+                            {
                                 BookId = item.BookId,
                                 Quantity = item.Quantity,
                                 UnitPrice = book.Price,
                                 StoreId = currentStoreId.Value
-                            };
-                            _context.Add(orderDetail);
+                            });
                         }
                     }
                 }
+
+
+
+                viewModel.Order.StoreId = currentStoreId.Value; // Assign StoreId to the order
+                _context.Add(viewModel.Order);
+                await _context.SaveChangesAsync(); // Save order to get OrderId
 
                 await _context.SaveChangesAsync(); // Save order details
                 TempData["SuccessMessage"] = "Đơn hàng đã được tạo thành công!";
