@@ -151,7 +151,7 @@ namespace bookstoree.Controllers
                 }
                 book.ImageUrl = "/images/books/" + uniqueFileName;
             }
-
+            book.DateAdded = DateTime.UtcNow;
             _context.Add(book);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Thêm sách thành công!";

@@ -6,6 +6,7 @@ using System.Security.Claims; // Added for ClaimTypes
 using System.Text.Json.Serialization; // Added for ReferenceHandler.Preserve
 using bookstoree.Services;
 using Npgsql.EntityFrameworkCore.PostgreSQL; // Added for PostgreSQL
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<bookstoreeContext>(options =>
@@ -33,7 +34,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // Add services to the container.
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    var connectionString = builder.Configuration.GetConnectionString("RedisConnection");
+    var configurationOptions = ConfigurationOptions.Parse(connectionString);
+    options.ConfigurationOptions = configurationOptions;
     options.InstanceName = "bookstoree_"; // Optional: prefix for keys in Redis
 });
 
