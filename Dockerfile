@@ -10,6 +10,6 @@ RUN dotnet publish "bookstoree.csproj" -c Release -o /app/publish
 # Stage 2: Create the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-EXPOSE 8080 # Render uses port 8080 for Docker services
+EXPOSE 8080
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "bookstoree.dll"]
