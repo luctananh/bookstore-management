@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.EntityFrameworkCore; // Added for [Index] attribute
 
 namespace bookstoree.Models
 {
+    [Index(nameof(Name), IsUnique = true)] // Added for performance
     public class Store
     {
         [Key]
