@@ -119,7 +119,7 @@
                     }
                 });
 
-                var discountCode = $('#Order_DiscountCode').val();
+                var discountCode = $('#Order_DiscountCodeId').val();
                 var total = subtotal;
                 if (discountCode && discountDetails[discountCode]) {
                     var discount = discountDetails[discountCode];
@@ -177,7 +177,7 @@
                 checkOrderDetails();
             });
 
-            $(document).on('change', '.order-detail-item select, .order-detail-item input, #Order_DiscountCode', function () {
+            $(document).on('change', '.order-detail-item select, .order-detail-item input, #Order_DiscountCodeId', function () {
                 calculateTotal();
             });
 
