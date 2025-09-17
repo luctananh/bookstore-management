@@ -224,7 +224,7 @@ namespace bookstoree.Controllers
                     bookToUpdate.CategoryId = book.CategoryId;
                     bookToUpdate.Price = book.Price;
                     bookToUpdate.StockQuantity = book.StockQuantity;
-                    bookToUpdate.DateAdded = book.DateAdded; // Assuming DateAdded can be updated from form
+                    bookToUpdate.DateAdded = book.DateAdded.ToUniversalTime(); // Assuming DateAdded can be updated from form
 
                     if (imageFile != null && imageFile.Length > 0)
                     {
