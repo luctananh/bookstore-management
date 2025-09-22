@@ -47,6 +47,7 @@
                                     <th>Tổng tiền</th>
                                     <th>Phương thức thanh toán</th>
                                     <th>Trạng thái</th>
+                                    <th>Địa chỉ giao hàng</th>
                                     <th>Ngày đặt hàng</th>
                                     <th>Chức năng</th>
                                 </tr>
@@ -86,7 +87,8 @@
                                         <td>@Html.DisplayFor(modelItem => item.DiscountCode.DiscountCodeId)</td>
                                         <td>@string.Format("{0:N0} VNĐ", item.TotalAmount)</td>
                                         <td>@Html.DisplayFor(modelItem => item.PaymentMethod)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Status)</td>                                        
+                                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.ShippingAddress)</td>
                                         <td>@Html.DisplayFor(modelItem => item.OrderDate)</td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm btn-info">Sửa</a> |

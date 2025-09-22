@@ -364,7 +364,7 @@ namespace bookstoree.Controllers
         [HttpPost]
         [Authorize] // Allow any authenticated user
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,UserId,OrderDate,Status,PaymentMethod,AppliedDiscountCode,DiscountCodeId,StoreId")] Order order, List<OrderDetail> OrderDetails)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,UserId,OrderDate,Status,PaymentMethod,AppliedDiscountCode,DiscountCodeId,StoreId,ShippingAddress")] Order order, List<OrderDetail> OrderDetails)
         {
             if (id != order.OrderId)
             {
@@ -443,6 +443,7 @@ namespace bookstoree.Controllers
                 orderToUpdate.OrderDate = order.OrderDate.ToUniversalTime();
                 orderToUpdate.Status = order.Status;
                 orderToUpdate.PaymentMethod = order.PaymentMethod;
+                orderToUpdate.ShippingAddress = order.ShippingAddress;
 
                 var detailsFromForm = OrderDetails
                     .Where(od => od.BookId > 0 && od.Quantity > 0)
