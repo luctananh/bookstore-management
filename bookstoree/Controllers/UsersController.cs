@@ -160,7 +160,7 @@ namespace bookstoree.Controllers
                 _context.Add(adminUser);
                 await _context.SaveChangesAsync();
 
-                                TempData["SuccessMessage"] = "Đăng ký cửa hàng và tài khoản Admin thành công!";
+                                TempData["SuccessMessage"] = "Đăng ký cửa hàng và tài khoản Admin thành công! Mã shop là: " + store.StoreId;
                                 TempData["StoreId"] = store.StoreId; // Pass StoreId to TempData
                 
                                 // Automatically sign in the new admin user

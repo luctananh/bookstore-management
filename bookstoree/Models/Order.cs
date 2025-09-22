@@ -23,6 +23,9 @@ namespace bookstoree.Models
         public int TotalAmount { get; set; } // Total amount after applying discounts and taxes
         public string? DiscountCodeId { get; set; }
 
+        [DisplayName("Địa chỉ giao hàng")]
+        public string? ShippingAddress { get; set; }
+
         [DisplayName("Mã cửa hàng")]
         public int? StoreId { get; set; }
         [ForeignKey("StoreId")]

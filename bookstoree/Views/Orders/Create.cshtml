@@ -48,6 +48,11 @@
                                 </select>
                                 <span asp-validation-for="Order.Status" class="text-danger"></span>
                             </div>
+                            <div class="form-group" id="shippingAddressContainer" style="display: none;">
+                                <label asp-for="Order.ShippingAddress" class="control-label"></label>
+                                <input asp-for="Order.ShippingAddress" class="form-control" />
+                                <span asp-validation-for="Order.ShippingAddress" class="text-danger"></span>
+                            </div>
                             <div class="form-group">
                                 <label asp-for="Order.PaymentMethod" class="control-label"></label>
                                 <select asp-for="Order.PaymentMethod" class="form-control">
@@ -180,6 +185,14 @@
             $(document).on('change', '.order-detail-item select, .order-detail-item input, #Order_DiscountCodeId', function () {
                 calculateTotal();
             });
+
+            $('#Order_Status').change(function () {
+                if ($(this).val() === 'Giao hàng') {
+                    $('#shippingAddressContainer').show();
+                } else {
+                    $('#shippingAddressContainer').hide();
+                }
+            }).trigger('change');
 
             calculateTotal();
             checkOrderDetails();
