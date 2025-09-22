@@ -209,8 +209,10 @@
             $('#Status').change(function () {
                 if ($(this).val() === 'Giao hàng') {
                     $('#shippingAddressContainer').show();
+                    $('#ShippingAddress').val(''); // Clear the address field
                 } else {
                     $('#shippingAddressContainer').hide();
+                    $('#ShippingAddress').val('Giao dịch tại cửa hàng'); // Set the address field
                 }
             }).trigger('change');
 
